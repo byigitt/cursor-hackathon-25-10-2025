@@ -7,9 +7,9 @@ import { TRPCReactProvider } from "~/trpc/react";
 import { Providers } from "./providers";
 
 export const metadata: Metadata = {
-  title: "SynApps",
+  title: "SynApp",
   description: "hızlı öğrenme platformu",
-  icons: [{ rel: "icon", url: "/synapps.ico" }],
+  icons: [{ rel: "icon", url: "/synapp.ico" }],
 };
 
 const geist = Geist({
