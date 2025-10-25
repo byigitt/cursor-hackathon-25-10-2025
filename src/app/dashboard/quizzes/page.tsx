@@ -1,233 +1,246 @@
 "use client";
 
-import { HelpCircle, Plus, Clock, Trophy, Target } from "lucide-react";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { api } from "~/trpc/react";
 import { Button } from "~/components/ui/button";
-import { Progress } from "~/components/ui/progress";
-
-const mockQuizzes = [
-  {
-    id: "1",
-    title: "Fotosentez ve Bitki Biyolojisi",
-    questions: 15,
-    averageScore: 85,
-    lastAttempt: "2 gün önce",
-    completed: true,
-  },
-  {
-    id: "2",
-    title: "Newton'un Hareket Yasaları",
-    questions: 20,
-    averageScore: 72,
-    lastAttempt: "1 hafta önce",
-    completed: true,
-  },
-  {
-    id: "3",
-    title: "Osmanlı İmparatorluğu Tarihi",
-    questions: 25,
-    averageScore: 0,
-    lastAttempt: null,
-    completed: false,
-  },
-];
+import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
+import { Skeleton } from "~/components/ui/skeleton";
+import { Input } from "~/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "~/components/ui/select";
+import { Search, BookOpen, Clock, TrendingUp, PlayCircle } from "lucide-react";
+import { Badge } from "~/components/ui/badge";
 
 export default function QuizzesPage() {
+  const router = useRouter();
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const { data: decks, isLoading: decksLoading } = api.deck.getAll.useQuery();
+  const { data: attempts, isLoading: attemptsLoading } =
+    api.quizAttempt.getMyAttempts.useQuery({});
+
+  type QuizAttempt = NonNullable<typeof attempts>[number];
+  type Deck = NonNullable<typeof decks>[number];
+
+  const isLoading = decksLoading || attemptsLoading;
+
+  // Group attempts by deck
+  const attemptsByDeck = attempts?.reduce(
+    (acc: Record<string, QuizAttempt[]>, attempt: QuizAttempt) => {
+      const deckId = attempt.quiz.deck.id;
+      if (!acc[deckId]) {
+        acc[deckId] = [];
+      }
+      acc[deckId].push(attempt);
+      return acc;
+    },
+    {} as Record<string, QuizAttempt[]>
+  );
+
+  const getAverageScore = (deckId: string) => {
+    const deckAttempts = attemptsByDeck?.[deckId] || [];
+    if (deckAttempts.length === 0) return null;
+    const sum = deckAttempts.reduce((acc: number, attempt: QuizAttempt) => acc + attempt.score, 0);
+    return Math.round(sum / deckAttempts.length);
+  };
+
+  const filteredDecks = decks?.filter((deck: Deck) =>
+    deck.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  if (isLoading) {
+    return (
+      <div className="space-y-6">
+        <Skeleton className="h-12 w-64" />
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <Skeleton className="h-64" />
+          <Skeleton className="h-64" />
+          <Skeleton className="h-64" />
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <>
-      <div className="flex flex-wrap justify-between gap-3 mb-6">
-        <div className="flex flex-col gap-1">
-          <p className="text-3xl font-bold leading-tight tracking-tight text-gray-900 dark:text-white">
-            Testler
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+            Quizlerim
+          </h1>
+          <p className="text-gray-600 dark:text-gray-400 mt-1">
+            Destelerinizdeki quizleri görüntüleyin ve çözün
           </p>
-          <p className="text-base font-normal leading-normal text-gray-500 dark:text-[#92adc9]">
-            AI tarafından oluşturulan testlerle bilginizi ölçün ve geliştirin.
+        </div>
+      </div>
+
+      {/* Search and Filters */}
+      <div className="flex flex-col sm:flex-row gap-4">
+        <div className="relative flex-1">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+          <Input
+            placeholder="Deste ara..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="pl-9"
+          />
+        </div>
+        <Select defaultValue="all">
+          <SelectTrigger className="w-full sm:w-48">
+            <SelectValue placeholder="Filtrele" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">Tüm Desteler</SelectItem>
+            <SelectItem value="completed">Çözülmüş</SelectItem>
+            <SelectItem value="pending">Bekleyen</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+
+      {/* Decks Grid */}
+      {!filteredDecks || filteredDecks.length === 0 ? (
+        <Card className="p-12 text-center">
+          <BookOpen className="h-12 w-12 mx-auto text-gray-400 mb-4" />
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+            Henüz quiz bulunamadı
+          </h3>
+          <p className="text-gray-600 dark:text-gray-400 mb-4">
+            Destelerinizden quiz oluşturarak başlayın.
           </p>
-        </div>
-        <Button className="bg-blue-600 hover:bg-blue-700 text-white">
-          <Plus className="mr-2 h-4 w-4" />
-          Yeni Test Oluştur
-        </Button>
-      </div>
+          <Button onClick={() => router.push("/dashboard/documents")}>
+            Belge Yükle
+          </Button>
+        </Card>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {filteredDecks.map((deck: Deck) => {
+            const averageScore = getAverageScore(deck.id);
+            const attemptCount = attemptsByDeck?.[deck.id]?.length || 0;
 
-      {/* Stats */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
-        <div className="rounded-xl border border-gray-200 dark:border-[#324d67] bg-white dark:bg-[#1a2633] p-6">
-          <div className="flex items-center gap-3">
-            <div className="rounded-lg bg-blue-100 dark:bg-blue-500/20 p-3">
-              <Trophy className="h-6 w-6 text-blue-600 dark:text-blue-500" />
-            </div>
-            <div>
-              <p className="text-sm text-gray-500 dark:text-gray-400">Tamamlanan</p>
-              <p className="text-2xl font-bold text-gray-900 dark:text-white">12</p>
-            </div>
-          </div>
-        </div>
-        <div className="rounded-xl border border-gray-200 dark:border-[#324d67] bg-white dark:bg-[#1a2633] p-6">
-          <div className="flex items-center gap-3">
-            <div className="rounded-lg bg-green-100 dark:bg-green-500/20 p-3">
-              <Target className="h-6 w-6 text-green-600 dark:text-green-500" />
-            </div>
-            <div>
-              <p className="text-sm text-gray-500 dark:text-gray-400">Ortalama Skor</p>
-              <p className="text-2xl font-bold text-gray-900 dark:text-white">78%</p>
-            </div>
-          </div>
-        </div>
-        <div className="rounded-xl border border-gray-200 dark:border-[#324d67] bg-white dark:bg-[#1a2633] p-6">
-          <div className="flex items-center gap-3">
-            <div className="rounded-lg bg-purple-100 dark:bg-purple-500/20 p-3">
-              <HelpCircle className="h-6 w-6 text-purple-600 dark:text-purple-500" />
-            </div>
-            <div>
-              <p className="text-sm text-gray-500 dark:text-gray-400">Toplam Soru</p>
-              <p className="text-2xl font-bold text-gray-900 dark:text-white">240</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Info Banner */}
-      <div className="rounded-xl bg-blue-50 dark:bg-blue-500/10 border border-blue-200 dark:border-blue-500/30 p-6 mb-8">
-        <div className="flex items-start gap-3">
-          <HelpCircle className="h-6 w-6 text-blue-600 dark:text-blue-500 mt-1" />
-          <div>
-            <h3 className="font-semibold text-gray-900 dark:text-white mb-2">
-              AI Destekli Test Oluşturma
-            </h3>
-            <p className="text-sm text-gray-700 dark:text-gray-300">
-              Dokümanlarınızdan otomatik olarak çoktan seçmeli testler oluşturuyoruz. 
-              AI, içeriğin en önemli noktalarını belirleyerek anlamlı sorular hazırlar.
-            </p>
-          </div>
-        </div>
-      </div>
-
-      {/* Quiz List */}
-      <div className="space-y-4">
-        <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
-          Mevcut Testler
-        </h2>
-        {mockQuizzes.map((quiz) => (
-          <div
-            key={quiz.id}
-            className="rounded-xl border border-gray-200 dark:border-[#324d67] bg-white dark:bg-[#1a2633] p-6 hover:border-blue-500 dark:hover:border-blue-500 transition-colors"
-          >
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-              <div className="flex-1">
-                <div className="flex items-center gap-2 mb-2">
-                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                    {quiz.title}
-                  </h3>
-                  {quiz.completed && (
-                    <span className="rounded-full bg-green-100 dark:bg-green-500/20 px-3 py-1 text-xs font-medium text-green-700 dark:text-green-400">
-                      Tamamlandı
-                    </span>
-                  )}
-                </div>
-                <div className="flex items-center gap-4 text-sm text-gray-500 dark:text-gray-400">
-                  <span className="flex items-center gap-1">
-                    <HelpCircle className="h-4 w-4" />
-                    {quiz.questions} soru
-                  </span>
-                  {quiz.lastAttempt && (
-                    <span className="flex items-center gap-1">
-                      <Clock className="h-4 w-4" />
-                      {quiz.lastAttempt}
-                    </span>
-                  )}
-                </div>
-                {quiz.completed && (
-                  <div className="mt-3">
-                    <div className="flex items-center justify-between text-sm mb-1">
-                      <span className="text-gray-600 dark:text-gray-400">
-                        En iyi skorunuz
-                      </span>
-                      <span className="font-semibold text-gray-900 dark:text-white">
-                        {quiz.averageScore}%
-                      </span>
-                    </div>
-                    <Progress value={quiz.averageScore} className="h-2" />
+            return (
+              <Card
+                key={deck.id}
+                className="hover:shadow-lg transition-shadow cursor-pointer group"
+                onClick={() => {
+                  // Navigate to the first available quiz or prompt to create one
+                  router.push(`/dashboard/documents`);
+                }}
+              >
+                <CardHeader>
+                  <div className="flex items-start justify-between">
+                    <BookOpen className="h-8 w-8 text-blue-600 dark:text-blue-500" />
+                    {averageScore !== null && (
+                      <Badge
+                        variant={
+                          averageScore >= 80
+                            ? "default"
+                            : averageScore >= 60
+                            ? "secondary"
+                            : "destructive"
+                        }
+                      >
+                        {averageScore}%
+                      </Badge>
+                    )}
                   </div>
-                )}
-              </div>
-              <div className="flex gap-2">
-                <Button
-                  variant={quiz.completed ? "outline" : "default"}
-                  className={
-                    quiz.completed
-                      ? ""
-                      : "bg-blue-600 hover:bg-blue-700 text-white"
-                  }
-                >
-                  {quiz.completed ? "Tekrar Çöz" : "Teste Başla"}
-                </Button>
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
-
-      {/* Empty State */}
-      {mockQuizzes.length === 0 && (
-        <div className="rounded-xl border-2 border-dashed border-gray-300 dark:border-[#324d67] bg-gray-50 dark:bg-[#1a2633] p-12 text-center">
-          <div className="max-w-md mx-auto">
-            <div className="rounded-full bg-blue-100 dark:bg-blue-500/20 p-6 w-20 h-20 mx-auto mb-4 flex items-center justify-center">
-              <HelpCircle className="h-10 w-10 text-blue-600 dark:text-blue-500" />
-            </div>
-            <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
-              Henüz test yok
-            </h3>
-            <p className="text-gray-600 dark:text-[#92adc9] mb-6">
-              Dokümanlarınızdan AI ile otomatik test oluşturmak için önce doküman yüklemelisiniz.
-            </p>
-            <Button className="bg-blue-600 hover:bg-blue-700 text-white">
-              Doküman Yükle
-            </Button>
-          </div>
+                  <CardTitle className="mt-4 line-clamp-2">
+                    {deck.name}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="space-y-2 text-sm">
+                    <div className="flex items-center justify-between text-gray-600 dark:text-gray-400">
+                      <div className="flex items-center gap-2">
+                        <Clock className="h-4 w-4" />
+                        <span>Deneme</span>
+                      </div>
+                      <span className="font-medium">{attemptCount}</span>
+                    </div>
+                    {averageScore !== null && (
+                      <div className="flex items-center justify-between text-gray-600 dark:text-gray-400">
+                        <div className="flex items-center gap-2">
+                          <TrendingUp className="h-4 w-4" />
+                          <span>Ortalama</span>
+                        </div>
+                        <span className="font-medium">{averageScore}%</span>
+                      </div>
+                    )}
+                  </div>
+                  <Button
+                    className="w-full gap-2 group-hover:bg-blue-700 transition-colors"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      router.push(`/dashboard/documents`);
+                    }}
+                  >
+                    <PlayCircle className="h-4 w-4" />
+                    Quiz Çöz
+                  </Button>
+                </CardContent>
+              </Card>
+            );
+          })}
         </div>
       )}
 
-      {/* Tips */}
-      <div className="mt-8">
-        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-          Test Çözme İpuçları
-        </h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="rounded-xl border border-gray-200 dark:border-[#324d67] bg-white dark:bg-[#1a2633] p-4">
-            <h4 className="font-semibold text-gray-900 dark:text-white mb-2">
-              📚 Önce Oku, Sonra Test Çöz
-            </h4>
-            <p className="text-sm text-gray-600 dark:text-[#92adc9]">
-              Dokümanı okumadan teste başlamayın. Önce hızlı okuma ile içeriği öğrenin.
-            </p>
-          </div>
-          <div className="rounded-xl border border-gray-200 dark:border-[#324d67] bg-white dark:bg-[#1a2633] p-4">
-            <h4 className="font-semibold text-gray-900 dark:text-white mb-2">
-              🔄 Düzenli Tekrar
-            </h4>
-            <p className="text-sm text-gray-600 dark:text-[#92adc9]">
-              Testleri düzenli aralıklarla tekrar çözerek bilgilerinizi pekiştirin.
-            </p>
-          </div>
-          <div className="rounded-xl border border-gray-200 dark:border-[#324d67] bg-white dark:bg-[#1a2633] p-4">
-            <h4 className="font-semibold text-gray-900 dark:text-white mb-2">
-              ⏱️ Zaman Yönetimi
-            </h4>
-            <p className="text-sm text-gray-600 dark:text-[#92adc9]">
-              Her soru için makul bir süre ayırın ve tüm soruları cevaplamaya çalışın.
-            </p>
-          </div>
-          <div className="rounded-xl border border-gray-200 dark:border-[#324d67] bg-white dark:bg-[#1a2633] p-4">
-            <h4 className="font-semibold text-gray-900 dark:text-white mb-2">
-              📊 Sonuçları İnceleyin
-            </h4>
-            <p className="text-sm text-gray-600 dark:text-[#92adc9]">
-              Test sonuçlarınızı inceleyin ve yanlış yaptığınız konuları tekrar çalışın.
-            </p>
-          </div>
+      {/* Recent Attempts */}
+      {attempts && attempts.length > 0 && (
+        <div className="space-y-4 mt-8">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+            Son Denemeler
+          </h2>
+          <Card>
+            <CardContent className="p-0">
+              <div className="divide-y divide-gray-200 dark:divide-gray-700">
+                {attempts.slice(0, 5).map((attempt: QuizAttempt) => (
+                  <div
+                    key={attempt.id}
+                    className="p-4 hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer transition-colors"
+                    onClick={() =>
+                      router.push(
+                        `/dashboard/quizzes/${attempt.quizId}/results/${attempt.id}`
+                      )
+                    }
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="flex-1 min-w-0">
+                        <p className="font-medium text-gray-900 dark:text-white truncate">
+                          {attempt.quiz.deck.name}
+                        </p>
+                        <p className="text-sm text-gray-500 dark:text-gray-400">
+                          {new Date(attempt.createdAt).toLocaleDateString("tr-TR", {
+                            year: "numeric",
+                            month: "long",
+                            day: "numeric",
+                          })}
+                        </p>
+                      </div>
+                      <Badge
+                        variant={
+                          attempt.score >= 80
+                            ? "default"
+                            : attempt.score >= 60
+                            ? "secondary"
+                            : "destructive"
+                        }
+                      >
+                        {Math.round(attempt.score)}%
+                      </Badge>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
         </div>
-      </div>
-    </>
+      )}
+    </div>
   );
 }
-
