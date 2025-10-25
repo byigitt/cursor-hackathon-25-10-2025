@@ -345,9 +345,43 @@ export default async function MarketingPage() {
                   <a href="https://github.com/byigitt/synapp" className="text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
                     <Github className="h-5 w-5" />
                   </a>
-          </div>
-        </div>
-      </div>
+                </div>
+              </div>
+
+              {/* Company */}
+              <div>
+                <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-4">Company</h3>
+                <ul className="space-y-3">
+                  <li>
+                    <Link href="/about" className="text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors text-sm">
+                      About
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="/contact" className="text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors text-sm">
+                      Contact
+                    </Link>
+                  </li>
+                </ul>
+              </div>
+
+              {/* Legal */}
+              <div>
+                <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-4">Legal</h3>
+                <ul className="space-y-3">
+                  <li>
+                    <Link href="/privacy" className="text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors text-sm">
+                      Privacy Policy
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="/terms" className="text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors text-sm">
+                      Terms of Service
+                    </Link>
+                  </li>
+                </ul>
+              </div>
+            </div>
           </div>
         </footer>
     </div>

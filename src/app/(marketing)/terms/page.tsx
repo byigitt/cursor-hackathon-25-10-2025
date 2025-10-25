@@ -201,7 +201,7 @@ export default function TermsPage() {
                 </Link>
               </div>
               <p className="text-gray-500 dark:text-gray-400 text-sm font-normal leading-normal">
-                © 2023 Synapp. All Rights Reserved.
+                © 2025 Synapp. All Rights Reserved.
               </p>
             </footer>
           </div>

@@ -52,7 +52,7 @@ function DeckQuizzes({ deck, onGenerateQuiz, generatingQuizFor, attemptsByQuiz, 
               {deck.name}
             </h3>
             <p className="text-sm text-gray-600 dark:text-gray-400">
-              Bu deste için henüz quiz oluşturulmamış
+              No quizzes created for this deck yet
             </p>
           </div>
           <Button
@@ -63,19 +63,19 @@ function DeckQuizzes({ deck, onGenerateQuiz, generatingQuizFor, attemptsByQuiz, 
             {generatingQuizFor === deck.id ? (
               <>
                 <Sparkles className="h-4 w-4 animate-pulse" />
-                Oluşturuluyor...
+                Creating...
               </>
             ) : (
               <>
                 <Plus className="h-4 w-4" />
-                Quiz Oluştur
+                Create Quiz
               </>
             )}
           </Button>
         </div>
         {deck._count.documents === 0 && (
           <p className="text-sm text-red-600 dark:text-red-400 mt-2">
-            Quiz oluşturmak için önce belge yüklemelisiniz.
+            You must upload documents first to create a quiz.
           </p>
         )}
       </Card>
@@ -98,12 +98,12 @@ function DeckQuizzes({ deck, onGenerateQuiz, generatingQuizFor, attemptsByQuiz, 
           {generatingQuizFor === deck.id ? (
             <>
               <Sparkles className="h-4 w-4 animate-pulse" />
-              Oluşturuluyor...
+              Creating...
             </>
           ) : (
             <>
               <Plus className="h-4 w-4" />
-              Yeni Quiz
+              New Quiz
             </>
           )}
         </Button>
@@ -141,7 +141,7 @@ function DeckQuizzes({ deck, onGenerateQuiz, generatingQuizFor, attemptsByQuiz, 
                   Quiz #{quiz.id.slice(-6)}
                 </CardTitle>
                 <p className="text-sm text-gray-600 dark:text-gray-400">
-                  {new Date(quiz.createdAt).toLocaleDateString("tr-TR", {
+                  {new Date(quiz.createdAt).toLocaleDateString("en-US", {
                     year: "numeric",
                     month: "long",
                     day: "numeric",
@@ -153,14 +153,14 @@ function DeckQuizzes({ deck, onGenerateQuiz, generatingQuizFor, attemptsByQuiz, 
                   <div className="flex items-center justify-between text-gray-600 dark:text-gray-400">
                     <div className="flex items-center gap-2">
                       <BookOpen className="h-4 w-4" />
-                      <span>Soru Sayısı</span>
+                      <span>Questions</span>
                     </div>
                     <span className="font-medium">{questionCount}</span>
                   </div>
                   <div className="flex items-center justify-between text-gray-600 dark:text-gray-400">
                     <div className="flex items-center gap-2">
                       <Clock className="h-4 w-4" />
-                      <span>Deneme</span>
+                      <span>Attempts</span>
                     </div>
                     <span className="font-medium">{attemptCount}</span>
                   </div>
@@ -168,7 +168,7 @@ function DeckQuizzes({ deck, onGenerateQuiz, generatingQuizFor, attemptsByQuiz, 
                     <div className="flex items-center justify-between text-gray-600 dark:text-gray-400">
                       <div className="flex items-center gap-2">
                         <TrendingUp className="h-4 w-4" />
-                        <span>Ortalama</span>
+                        <span>Average</span>
                       </div>
                       <span className="font-medium">{averageScore}%</span>
                     </div>
@@ -182,7 +182,7 @@ function DeckQuizzes({ deck, onGenerateQuiz, generatingQuizFor, attemptsByQuiz, 
                   }}
                 >
                   <PlayCircle className="h-4 w-4" />
-                  Quiz Çöz
+                  Take Quiz
                 </Button>
               </CardContent>
             </Card>
@@ -276,10 +276,10 @@ export default function QuizzesPage() {
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
           <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-            Quizlerim
+            My Quizzes
           </h1>
           <p className="text-gray-600 dark:text-gray-400 mt-1">
-            Destelerinizdeki quizleri görüntüleyin ve çözün
+            View and take quizzes from your decks
           </p>
         </div>
       </div>
@@ -289,7 +289,7 @@ export default function QuizzesPage() {
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
           <Input
-            placeholder="Deste ara..."
+            placeholder="Search decks..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="pl-9"
@@ -297,12 +297,12 @@ export default function QuizzesPage() {
         </div>
         <Select defaultValue="all">
           <SelectTrigger className="w-full sm:w-48">
-            <SelectValue placeholder="Filtrele" />
+            <SelectValue placeholder="Filter" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">Tüm Desteler</SelectItem>
-            <SelectItem value="completed">Çözülmüş</SelectItem>
-            <SelectItem value="pending">Bekleyen</SelectItem>
+            <SelectItem value="all">All Decks</SelectItem>
+            <SelectItem value="completed">Completed</SelectItem>
+            <SelectItem value="pending">Pending</SelectItem>
           </SelectContent>
         </Select>
       </div>
@@ -312,23 +312,23 @@ export default function QuizzesPage() {
         <Card className="p-12 text-center">
           <BookOpen className="h-12 w-12 mx-auto text-gray-400 mb-4" />
           <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-            Henüz deste bulunamadı
+            No decks found yet
           </h3>
           <p className="text-gray-600 dark:text-gray-400 mb-4">
-            Önce bir deste oluşturup belge yükleyin, sonra quiz oluşturabilirsiniz.
+            First create a deck and upload documents, then you can create quizzes.
           </p>
           <Button onClick={() => router.push("/dashboard/documents")}>
-            Belge Yükle
+            Upload Document
           </Button>
         </Card>
       ) : totalQuizCount === 0 ? (
         <Card className="p-12 text-center">
           <Sparkles className="h-12 w-12 mx-auto text-blue-500 mb-4" />
           <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-            Henüz quiz oluşturulmamış
+            No quizzes created yet
           </h3>
           <p className="text-gray-600 dark:text-gray-400 mb-4">
-            Destelerinizden AI destekli quiz oluşturarak başlayın.
+            Start by creating AI-powered quizzes from your decks.
           </p>
           <div className="flex flex-col gap-3 max-w-md mx-auto">
             {filteredDecks.map((deck: Deck) => (
@@ -341,12 +341,12 @@ export default function QuizzesPage() {
                 {generatingQuizFor === deck.id ? (
                   <>
                     <Sparkles className="h-4 w-4 animate-pulse" />
-                    Quiz oluşturuluyor...
+                    Creating quiz...
                   </>
                 ) : (
                   <>
                     <Plus className="h-4 w-4" />
-                    {deck.name} için Quiz Oluştur
+                    Create Quiz for {deck.name}
                   </>
                 )}
               </Button>
@@ -373,7 +373,7 @@ export default function QuizzesPage() {
       {attempts && attempts.length > 0 && (
         <div className="space-y-4 mt-8">
           <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-            Son Denemeler
+            Recent Attempts
           </h2>
           <Card>
             <CardContent className="p-0">
@@ -394,7 +394,7 @@ export default function QuizzesPage() {
                           {attempt.quiz.deck.name}
                         </p>
                         <p className="text-sm text-gray-500 dark:text-gray-400">
-                          {new Date(attempt.createdAt).toLocaleDateString("tr-TR", {
+                          {new Date(attempt.createdAt).toLocaleDateString("en-US", {
                             year: "numeric",
                             month: "long",
                             day: "numeric",

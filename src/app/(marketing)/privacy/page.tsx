@@ -1,35 +1,41 @@
 import Link from "next/link";
-import { BookOpenCheck } from "lucide-react";
 import { ThemeToggle } from "~/components/theme-toggle";
 
 export default function PrivacyPage() {
   return (
-    <div className="relative flex min-h-screen w-full flex-col bg-white dark:bg-[#101922]">
-      <div className="layout-container flex h-full grow flex-col">
-        <div className="flex flex-1 justify-center py-5">
-          <div className="layout-content-container flex flex-col max-w-4xl flex-1 px-4">
-            {/* Header */}
-            <header className="flex items-center justify-between whitespace-nowrap py-3">
+    <div className="relative flex min-h-screen w-full flex-col bg-white dark:bg-[#0a0f16]">
+      <div className="flex flex-col min-h-screen">
+        {/* Navigation */}
+        <nav className="sticky top-0 z-50 border-b border-gray-100 dark:border-gray-800 bg-white/80 dark:bg-[#0a0f16]/80 backdrop-blur-xl">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex items-center justify-between h-16">
               <Link href="/" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
-                <BookOpenCheck className="h-6 w-6 text-[#007BFF]" />
-                <h2 className="text-xl font-bold leading-tight tracking-tight text-gray-900 dark:text-white">
+                <img 
+                  src="/synapp-logo-white.svg" 
+                  alt="Synapp" 
+                  className="h-8 w-8 dark:invert-0 invert" 
+                />
+                <span className="text-xl font-bold text-gray-900 dark:text-white">
                   Synapp
-                </h2>
+                </span>
               </Link>
               <ThemeToggle />
-            </header>
+            </div>
+          </div>
+        </nav>
 
-            {/* Main Content */}
-            <main className="flex-1 py-12">
-              <h1 className="text-4xl font-bold mb-6 text-gray-900 dark:text-white">
-                Gizlilik Politikası
-              </h1>
-              
-              <p className="text-sm text-gray-500 dark:text-gray-400 mb-8">
-                Son Güncellenme: 25 Ekim 2025
-              </p>
+        {/* Main Content */}
+        <main className="flex-1">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
+            <h1 className="text-4xl md:text-5xl font-bold mb-6 text-gray-900 dark:text-white">
+              Privacy Policy
+            </h1>
+            
+            <p className="text-sm text-gray-500 dark:text-gray-400 mb-12">
+              Last Updated: October 25, 2025
+            </p>
 
-              <div className="prose dark:prose-invert max-w-none space-y-8">
+            <div className="max-w-4xl space-y-12">
                 <section>
                   <h2 className="text-2xl font-bold mb-4 text-gray-900 dark:text-white">1. Giriş</h2>
                   <p className="text-gray-600 dark:text-gray-400">
@@ -177,7 +183,7 @@ export default function PrivacyPage() {
                 </Link>
               </div>
               <p className="text-gray-500 dark:text-gray-400 text-sm font-normal leading-normal">
-                © 2023 Synapp. All Rights Reserved.
+                © 2025 Synapp. All Rights Reserved.
               </p>
             </footer>
           </div>

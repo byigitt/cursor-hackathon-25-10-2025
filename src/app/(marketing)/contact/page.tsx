@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { BookOpenCheck } from "lucide-react";
 import { ThemeToggle } from "~/components/theme-toggle";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
@@ -24,23 +23,23 @@ export default function ContactPage() {
     const newErrors: Record<string, string> = {};
 
     if (!formData.name.trim()) {
-      newErrors.name = "İsim gereklidir";
+      newErrors.name = "Name is required";
     }
 
     if (!formData.email.trim()) {
-      newErrors.email = "E-posta gereklidir";
+      newErrors.email = "Email is required";
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      newErrors.email = "Geçerli bir e-posta adresi giriniz";
+      newErrors.email = "Please enter a valid email address";
     }
 
     if (!formData.subject.trim()) {
-      newErrors.subject = "Konu gereklidir";
+      newErrors.subject = "Subject is required";
     }
 
     if (!formData.message.trim()) {
-      newErrors.message = "Mesaj gereklidir";
+      newErrors.message = "Message is required";
     } else if (formData.message.trim().length < 10) {
-      newErrors.message = "Mesaj en az 10 karakter olmalıdır";
+      newErrors.message = "Message must be at least 10 characters";
     }
 
     setErrors(newErrors);
@@ -79,155 +78,163 @@ export default function ContactPage() {
   };
 
   return (
-    <div className="relative flex min-h-screen w-full flex-col bg-white dark:bg-[#101922]">
-      <div className="layout-container flex h-full grow flex-col">
-        <div className="flex flex-1 justify-center py-5">
-          <div className="layout-content-container flex flex-col max-w-4xl flex-1 px-4">
-            {/* Header */}
-            <header className="flex items-center justify-between whitespace-nowrap py-3">
+    <div className="relative flex min-h-screen w-full flex-col bg-white dark:bg-[#0a0f16]">
+      <div className="flex flex-col min-h-screen">
+        {/* Navigation */}
+        <nav className="sticky top-0 z-50 border-b border-gray-100 dark:border-gray-800 bg-white/80 dark:bg-[#0a0f16]/80 backdrop-blur-xl">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex items-center justify-between h-16">
               <Link href="/" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
-                <BookOpenCheck className="h-6 w-6 text-[#007BFF]" />
-                <h2 className="text-xl font-bold leading-tight tracking-tight text-gray-900 dark:text-white">
+                <img 
+                  src="/synapp-logo-white.svg" 
+                  alt="Synapp" 
+                  className="h-8 w-8 dark:invert-0 invert" 
+                />
+                <span className="text-xl font-bold text-gray-900 dark:text-white">
                   Synapp
-                </h2>
+                </span>
               </Link>
               <ThemeToggle />
-            </header>
-
-            {/* Main Content */}
-            <main className="flex-1 py-12">
-              <h1 className="text-4xl font-bold mb-6 text-gray-900 dark:text-white">
-                İletişim
-              </h1>
-              
-              <p className="text-lg text-gray-600 dark:text-gray-400 mb-8">
-                Sorularınız, önerileriniz veya geri bildirimleriniz için bizimle iletişime geçin.
-              </p>
-
-              {isSubmitted && (
-                <div className="mb-6 p-4 bg-green-100 dark:bg-green-900/20 border border-green-400 dark:border-green-600 rounded-lg">
-                  <p className="text-green-800 dark:text-green-300 font-medium">
-                    Mesajınız başarıyla gönderildi! En kısa sürede size dönüş yapacağız.
-                  </p>
-                </div>
-              )}
-
-              <form onSubmit={handleSubmit} className="space-y-6 max-w-2xl">
-                <div className="space-y-2">
-                  <Label htmlFor="name" className="text-gray-700 dark:text-gray-300">
-                    İsim <span className="text-red-500">*</span>
-                  </Label>
-                  <Input
-                    id="name"
-                    type="text"
-                    placeholder="Adınız Soyadınız"
-                    value={formData.name}
-                    onChange={(e) => handleChange("name", e.target.value)}
-                    disabled={isSubmitting}
-                    className={errors.name ? "border-red-500" : ""}
-                  />
-                  {errors.name && (
-                    <p className="text-sm text-red-500">{errors.name}</p>
-                  )}
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="email" className="text-gray-700 dark:text-gray-300">
-                    E-posta <span className="text-red-500">*</span>
-                  </Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    placeholder="ornek@email.com"
-                    value={formData.email}
-                    onChange={(e) => handleChange("email", e.target.value)}
-                    disabled={isSubmitting}
-                    className={errors.email ? "border-red-500" : ""}
-                  />
-                  {errors.email && (
-                    <p className="text-sm text-red-500">{errors.email}</p>
-                  )}
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="subject" className="text-gray-700 dark:text-gray-300">
-                    Konu <span className="text-red-500">*</span>
-                  </Label>
-                  <Input
-                    id="subject"
-                    type="text"
-                    placeholder="Mesajınızın konusu"
-                    value={formData.subject}
-                    onChange={(e) => handleChange("subject", e.target.value)}
-                    disabled={isSubmitting}
-                    className={errors.subject ? "border-red-500" : ""}
-                  />
-                  {errors.subject && (
-                    <p className="text-sm text-red-500">{errors.subject}</p>
-                  )}
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="message" className="text-gray-700 dark:text-gray-300">
-                    Mesaj <span className="text-red-500">*</span>
-                  </Label>
-                  <Textarea
-                    id="message"
-                    placeholder="Mesajınızı buraya yazın..."
-                    value={formData.message}
-                    onChange={(e) => handleChange("message", e.target.value)}
-                    disabled={isSubmitting}
-                    className={`min-h-[150px] ${errors.message ? "border-red-500" : ""}`}
-                  />
-                  {errors.message && (
-                    <p className="text-sm text-red-500">{errors.message}</p>
-                  )}
-                </div>
-
-                <Button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className="bg-[#007BFF] hover:bg-[#007BFF]/90 text-white font-bold transition-transform duration-200 hover:scale-[1.02] h-12 px-8"
-                >
-                  {isSubmitting ? "Gönderiliyor..." : "Gönder"}
-                </Button>
-              </form>
-            </main>
-
-            {/* Footer */}
-            <footer className="flex flex-col gap-6 px-5 py-10 text-center">
-              <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-4">
-                <Link 
-                  href="/about"
-                  className="text-gray-500 dark:text-gray-400 text-base font-normal leading-normal hover:text-[#007BFF] dark:hover:text-[#007BFF]"
-                >
-                  Hakkında
-                </Link>
-                <Link 
-                  href="/contact"
-                  className="text-gray-500 dark:text-gray-400 text-base font-normal leading-normal hover:text-[#007BFF] dark:hover:text-[#007BFF]"
-                >
-                  İletişim
-                </Link>
-                <Link 
-                  href="/privacy"
-                  className="text-gray-500 dark:text-gray-400 text-base font-normal leading-normal hover:text-[#007BFF] dark:hover:text-[#007BFF]"
-                >
-                  Gizlilik Politikası
-                </Link>
-                <Link 
-                  href="/terms"
-                  className="text-gray-500 dark:text-gray-400 text-base font-normal leading-normal hover:text-[#007BFF] dark:hover:text-[#007BFF]"
-                >
-                  Kullanım Koşulları
-                </Link>
-              </div>
-              <p className="text-gray-500 dark:text-gray-400 text-sm font-normal leading-normal">
-                © 2023 Synapp. All Rights Reserved.
-              </p>
-            </footer>
+            </div>
           </div>
-        </div>
+        </nav>
+
+        {/* Main Content */}
+        <main className="flex-1">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
+            <h1 className="text-4xl md:text-5xl font-bold mb-6 text-gray-900 dark:text-white">
+              Contact
+            </h1>
+            
+            <p className="text-xl text-gray-600 dark:text-gray-400 mb-12 leading-relaxed">
+              Get in touch with us for questions, suggestions, or feedback.
+            </p>
+
+            {isSubmitted && (
+              <div className="mb-8 p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg max-w-2xl">
+                <p className="text-green-800 dark:text-green-300 font-medium">
+                  Your message has been sent successfully! We'll get back to you as soon as possible.
+                </p>
+              </div>
+            )}
+
+            <form onSubmit={handleSubmit} className="space-y-6 max-w-2xl">
+              <div className="space-y-2">
+                <Label htmlFor="name" className="text-gray-700 dark:text-gray-300">
+                  Name <span className="text-red-500">*</span>
+                </Label>
+                <Input
+                  id="name"
+                  type="text"
+                  placeholder="Your Full Name"
+                  value={formData.name}
+                  onChange={(e) => handleChange("name", e.target.value)}
+                  disabled={isSubmitting}
+                  className={errors.name ? "border-red-500" : ""}
+                />
+                {errors.name && (
+                  <p className="text-sm text-red-500">{errors.name}</p>
+                )}
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="email" className="text-gray-700 dark:text-gray-300">
+                  Email <span className="text-red-500">*</span>
+                </Label>
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="example@email.com"
+                  value={formData.email}
+                  onChange={(e) => handleChange("email", e.target.value)}
+                  disabled={isSubmitting}
+                  className={errors.email ? "border-red-500" : ""}
+                />
+                {errors.email && (
+                  <p className="text-sm text-red-500">{errors.email}</p>
+                )}
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="subject" className="text-gray-700 dark:text-gray-300">
+                  Subject <span className="text-red-500">*</span>
+                </Label>
+                <Input
+                  id="subject"
+                  type="text"
+                  placeholder="Subject of your message"
+                  value={formData.subject}
+                  onChange={(e) => handleChange("subject", e.target.value)}
+                  disabled={isSubmitting}
+                  className={errors.subject ? "border-red-500" : ""}
+                />
+                {errors.subject && (
+                  <p className="text-sm text-red-500">{errors.subject}</p>
+                )}
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="message" className="text-gray-700 dark:text-gray-300">
+                  Message <span className="text-red-500">*</span>
+                </Label>
+                <Textarea
+                  id="message"
+                  placeholder="Write your message here..."
+                  value={formData.message}
+                  onChange={(e) => handleChange("message", e.target.value)}
+                  disabled={isSubmitting}
+                  className={`min-h-[150px] ${errors.message ? "border-red-500" : ""}`}
+                />
+                {errors.message && (
+                  <p className="text-sm text-red-500">{errors.message}</p>
+                )}
+              </div>
+
+              <Button
+                type="submit"
+                disabled={isSubmitting}
+                className="bg-blue-600 hover:bg-blue-700 text-white font-bold h-12 px-8"
+              >
+                {isSubmitting ? "Sending..." : "Send"}
+              </Button>
+            </form>
+          </div>
+        </main>
+
+        {/* Footer */}
+        <footer className="border-t border-gray-200 dark:border-gray-800 bg-white dark:bg-[#0a0f16]">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-4 mb-6">
+              <Link 
+                href="/about"
+                className="text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+              >
+                About
+              </Link>
+              <Link 
+                href="/contact"
+                className="text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+              >
+                Contact
+              </Link>
+              <Link 
+                href="/privacy"
+                className="text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+              >
+                Privacy Policy
+              </Link>
+              <Link 
+                href="/terms"
+                className="text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+              >
+                Terms of Service
+              </Link>
+            </div>
+            <p className="text-center text-gray-500 dark:text-gray-400 text-sm">
+              © 2025 Synapp. All Rights Reserved.
+            </p>
+          </div>
+        </footer>
       </div>
     </div>
   );
