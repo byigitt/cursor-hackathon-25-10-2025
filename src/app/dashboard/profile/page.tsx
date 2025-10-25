@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Camera, Bell, Shield, Mail, Smartphone } from "lucide-react";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
@@ -14,60 +14,111 @@ import {
   CardHeader,
   CardTitle,
 } from "~/components/ui/card";
+import { api } from "~/trpc/react";
+import { toast } from "sonner";
 
 export default function ProfilePage() {
-  const [name, setName] = useState("Alex Doe");
-  const [username, setUsername] = useState("alexdoe");
-  const [email, setEmail] = useState("alex.doe@example.com");
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
   const [emailNotifications, setEmailNotifications] = useState(true);
   const [appNotifications, setAppNotifications] = useState(true);
 
   const [leaderboardTab, setLeaderboardTab] = useState("weekly");
 
+  // Fetch user data
+  const { data: user, isLoading: isLoadingUser } = api.user.getCurrentUser.useQuery();
+  
+  // Fetch streak data
+  const { data: streak, isLoading: isLoadingStreak } = api.gamification.getMyStreak.useQuery();
+  
+  // Fetch leaderboard data
+  const { data: leaderboard, isLoading: isLoadingLeaderboard } = api.gamification.getLeaderboard.useQuery({ limit: 10 });
+  
+  // Fetch quiz stats
+  const { data: quizStats, isLoading: isLoadingStats } = api.quizAttempt.getStats.useQuery({});
+
+  // Update profile mutation
+  const updateProfile = api.user.updateProfile.useMutation({
+    onSuccess: (data) => {
+      toast.success("Profile updated successfully!");
+      setName(data.name || "");
+      setEmail(data.email || "");
+    },
+    onError: (error) => {
+      toast.error(error.message || "Failed to update profile");
+    },
+  });
+
+  // Initialize form with user data
+  useEffect(() => {
+    if (user) {
+      setName(user.name || "");
+      setEmail(user.email || "");
+    }
+  }, [user]);
+
   const handleSaveProfile = (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle profile save logic here
-    console.log("Saving profile...", { name, username, email });
+    updateProfile.mutate({ name, email });
   };
 
+  // Calculate stats from real data
   const stats = [
     {
-      label: "Daily Streak",
-      value: "15 Days",
-      change: "+2%",
+      label: "Current Streak",
+      value: streak ? `${streak.currentStreak} Days` : "0 Days",
+      change: streak?.longestStreak ? `Best: ${streak.longestStreak}` : "N/A",
       isPositive: true,
     },
     {
-      label: "Total Points",
-      value: "12,500",
-      change: "+150",
+      label: "Total Attempts",
+      value: quizStats?.totalAttempts?.toString() || "0",
+      change: quizStats?.recentAttempts?.length ? `${quizStats.recentAttempts.length} recent` : "No attempts",
       isPositive: true,
     },
     {
-      label: "Global Ranking",
-      value: "#8",
-      change: "-1",
-      isPositive: false,
+      label: "Average Score",
+      value: quizStats?.averageScore ? `${quizStats.averageScore.toFixed(1)}%` : "N/A",
+      change: quizStats?.bestScore ? `Best: ${quizStats.bestScore.toFixed(1)}%` : "N/A",
+      isPositive: true,
     },
   ];
 
-  const leaderboardData = {
-    weekly: [
-      { position: 1, name: "Jane Doe", points: 15300, avatar: "JD", isCurrentUser: false },
-      { position: 8, name: "Alex Doe (You)", points: 12500, avatar: "AD", isCurrentUser: true },
-      { position: 9, name: "John Smith", points: 12100, avatar: "JS", isCurrentUser: false },
-    ],
-    monthly: [
-      { position: 1, name: "Michael Chen", points: 48500, avatar: "MC", isCurrentUser: false },
-      { position: 5, name: "Sarah Wilson", points: 31200, avatar: "SW", isCurrentUser: false },
-      { position: 12, name: "Alex Doe (You)", points: 25800, avatar: "AD", isCurrentUser: true },
-    ],
-    allTime: [
-      { position: 1, name: "Emma Thompson", points: 125000, avatar: "ET", isCurrentUser: false },
-      { position: 15, name: "Alex Doe (You)", points: 42300, avatar: "AD", isCurrentUser: true },
-      { position: 16, name: "David Lee", points: 42100, avatar: "DL", isCurrentUser: false },
-    ],
+  // Get user's initials for avatar
+  const getInitials = (name: string | null | undefined) => {
+    if (!name) return "?";
+    return name
+      .split(" ")
+      .map((n) => n[0])
+      .join("")
+      .toUpperCase()
+      .slice(0, 2);
   };
+
+  const userInitials = user?.name ? getInitials(user.name) : "?";
+
+  // Process leaderboard data to show all in one list (we'll keep the same UI but use real data)
+  const leaderboardUsers = leaderboard?.map((entry) => ({
+    position: entry.rank,
+    name: entry.userId === user?.id ? `${entry.userName} (You)` : entry.userName,
+    points: entry.longestStreak,
+    avatar: getInitials(entry.userName),
+    isCurrentUser: entry.userId === user?.id,
+  })) || [];
+
+  const leaderboardData = {
+    weekly: leaderboardUsers,
+    monthly: leaderboardUsers,
+    allTime: leaderboardUsers,
+  };
+
+  if (isLoadingUser || isLoadingStreak || isLoadingStats) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="text-gray-600 dark:text-gray-400">Loading profile...</div>
+      </div>
+    );
+  }
 
   return (
     <>
@@ -75,16 +126,15 @@ export default function ProfilePage() {
       <div className="flex flex-col sm:flex-row gap-6 mb-8 p-6 rounded-xl border border-gray-200 dark:border-[#324d67] bg-white dark:bg-[#1a2633]">
         <div className="relative">
           <div className="w-32 h-32 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center text-white text-4xl font-bold">
-            AD
+            {userInitials}
           </div>
           <button className="absolute bottom-0 right-0 p-2 rounded-full bg-blue-600 dark:bg-blue-500 text-white hover:bg-blue-700 dark:hover:bg-blue-600 transition-colors">
             <Camera className="h-4 w-4" />
           </button>
         </div>
         <div className="flex flex-col justify-center">
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-1">{name}</h1>
-          <p className="text-gray-600 dark:text-[#92adc9] mb-1">@{username}</p>
-          <p className="text-gray-600 dark:text-[#92adc9]">{email}</p>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-1">{user?.name || "Anonymous"}</h1>
+          <p className="text-gray-600 dark:text-[#92adc9]">{user?.email || "No email"}</p>
         </div>
       </div>
 
@@ -132,97 +182,109 @@ export default function ProfilePage() {
                 <TabsTrigger value="allTime">All Time</TabsTrigger>
               </TabsList>
               <TabsContent value="weekly" className="space-y-2">
-                {leaderboardData.weekly.map((user) => (
-                  <div
-                    key={user.position}
-                    className={`flex items-center justify-between p-3 rounded-lg ${
-                      user.isCurrentUser
-                        ? "bg-blue-600/20 dark:bg-blue-500/20 border border-blue-600 dark:border-blue-500"
-                        : "bg-gray-100 dark:bg-[#233648]"
-                    }`}
-                  >
-                    <div className="flex items-center gap-3">
-                      <span
-                        className={`font-bold w-6 text-center ${
-                          user.position === 1
-                            ? "text-yellow-500"
-                            : "text-gray-600 dark:text-gray-400"
-                        }`}
-                      >
-                        {user.position}
-                      </span>
-                      <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center text-white text-xs font-bold">
-                        {user.avatar}
+                {leaderboardData.weekly.length === 0 ? (
+                  <p className="text-gray-600 dark:text-gray-400 text-center py-4">No leaderboard data yet</p>
+                ) : (
+                  leaderboardData.weekly.map((user) => (
+                    <div
+                      key={user.position}
+                      className={`flex items-center justify-between p-3 rounded-lg ${
+                        user.isCurrentUser
+                          ? "bg-blue-600/20 dark:bg-blue-500/20 border border-blue-600 dark:border-blue-500"
+                          : "bg-gray-100 dark:bg-[#233648]"
+                      }`}
+                    >
+                      <div className="flex items-center gap-3">
+                        <span
+                          className={`font-bold w-6 text-center ${
+                            user.position === 1
+                              ? "text-yellow-500"
+                              : "text-gray-600 dark:text-gray-400"
+                          }`}
+                        >
+                          {user.position}
+                        </span>
+                        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center text-white text-xs font-bold">
+                          {user.avatar}
+                        </div>
+                        <p className="font-medium text-gray-900 dark:text-white">{user.name}</p>
                       </div>
-                      <p className="font-medium text-gray-900 dark:text-white">{user.name}</p>
+                      <p className="font-bold text-green-600 dark:text-green-400">
+                        {user.points} Day Streak
+                      </p>
                     </div>
-                    <p className="font-bold text-green-600 dark:text-green-400">
-                      {user.points.toLocaleString()} Points
-                    </p>
-                  </div>
-                ))}
+                  ))
+                )}
               </TabsContent>
               <TabsContent value="monthly" className="space-y-2">
-                {leaderboardData.monthly.map((user) => (
-                  <div
-                    key={user.position}
-                    className={`flex items-center justify-between p-3 rounded-lg ${
-                      user.isCurrentUser
-                        ? "bg-blue-600/20 dark:bg-blue-500/20 border border-blue-600 dark:border-blue-500"
-                        : "bg-gray-100 dark:bg-[#233648]"
-                    }`}
-                  >
-                    <div className="flex items-center gap-3">
-                      <span
-                        className={`font-bold w-6 text-center ${
-                          user.position === 1
-                            ? "text-yellow-500"
-                            : "text-gray-600 dark:text-gray-400"
-                        }`}
-                      >
-                        {user.position}
-                      </span>
-                      <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center text-white text-xs font-bold">
-                        {user.avatar}
+                {leaderboardData.monthly.length === 0 ? (
+                  <p className="text-gray-600 dark:text-gray-400 text-center py-4">No leaderboard data yet</p>
+                ) : (
+                  leaderboardData.monthly.map((user) => (
+                    <div
+                      key={user.position}
+                      className={`flex items-center justify-between p-3 rounded-lg ${
+                        user.isCurrentUser
+                          ? "bg-blue-600/20 dark:bg-blue-500/20 border border-blue-600 dark:border-blue-500"
+                          : "bg-gray-100 dark:bg-[#233648]"
+                      }`}
+                    >
+                      <div className="flex items-center gap-3">
+                        <span
+                          className={`font-bold w-6 text-center ${
+                            user.position === 1
+                              ? "text-yellow-500"
+                              : "text-gray-600 dark:text-gray-400"
+                          }`}
+                        >
+                          {user.position}
+                        </span>
+                        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center text-white text-xs font-bold">
+                          {user.avatar}
+                        </div>
+                        <p className="font-medium text-gray-900 dark:text-white">{user.name}</p>
                       </div>
-                      <p className="font-medium text-gray-900 dark:text-white">{user.name}</p>
+                      <p className="font-bold text-green-600 dark:text-green-400">
+                        {user.points} Day Streak
+                      </p>
                     </div>
-                    <p className="font-bold text-green-600 dark:text-green-400">
-                      {user.points.toLocaleString()} Points
-                    </p>
-                  </div>
-                ))}
+                  ))
+                )}
               </TabsContent>
               <TabsContent value="allTime" className="space-y-2">
-                {leaderboardData.allTime.map((user) => (
-                  <div
-                    key={user.position}
-                    className={`flex items-center justify-between p-3 rounded-lg ${
-                      user.isCurrentUser
-                        ? "bg-blue-600/20 dark:bg-blue-500/20 border border-blue-600 dark:border-blue-500"
-                        : "bg-gray-100 dark:bg-[#233648]"
-                    }`}
-                  >
-                    <div className="flex items-center gap-3">
-                      <span
-                        className={`font-bold w-6 text-center ${
-                          user.position === 1
-                            ? "text-yellow-500"
-                            : "text-gray-600 dark:text-gray-400"
-                        }`}
-                      >
-                        {user.position}
-                      </span>
-                      <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center text-white text-xs font-bold">
-                        {user.avatar}
+                {leaderboardData.allTime.length === 0 ? (
+                  <p className="text-gray-600 dark:text-gray-400 text-center py-4">No leaderboard data yet</p>
+                ) : (
+                  leaderboardData.allTime.map((user) => (
+                    <div
+                      key={user.position}
+                      className={`flex items-center justify-between p-3 rounded-lg ${
+                        user.isCurrentUser
+                          ? "bg-blue-600/20 dark:bg-blue-500/20 border border-blue-600 dark:border-blue-500"
+                          : "bg-gray-100 dark:bg-[#233648]"
+                      }`}
+                    >
+                      <div className="flex items-center gap-3">
+                        <span
+                          className={`font-bold w-6 text-center ${
+                            user.position === 1
+                              ? "text-yellow-500"
+                              : "text-gray-600 dark:text-gray-400"
+                          }`}
+                        >
+                          {user.position}
+                        </span>
+                        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center text-white text-xs font-bold">
+                          {user.avatar}
+                        </div>
+                        <p className="font-medium text-gray-900 dark:text-white">{user.name}</p>
                       </div>
-                      <p className="font-medium text-gray-900 dark:text-white">{user.name}</p>
+                      <p className="font-bold text-green-600 dark:text-green-400">
+                        {user.points} Day Streak
+                      </p>
                     </div>
-                    <p className="font-bold text-green-600 dark:text-green-400">
-                      {user.points.toLocaleString()} Points
-                    </p>
-                  </div>
-                ))}
+                  ))
+                )}
               </TabsContent>
             </Tabs>
           </CardContent>
@@ -243,17 +305,7 @@ export default function ProfilePage() {
                   id="name"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="bg-white dark:bg-[#233648] border-gray-300 dark:border-[#324d67]"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="username" className="text-gray-700 dark:text-gray-300">
-                  Username
-                </Label>
-                <Input
-                  id="username"
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
+                  disabled={updateProfile.isPending}
                   className="bg-white dark:bg-[#233648] border-gray-300 dark:border-[#324d67]"
                 />
               </div>
@@ -266,14 +318,16 @@ export default function ProfilePage() {
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
+                  disabled={updateProfile.isPending}
                   className="bg-white dark:bg-[#233648] border-gray-300 dark:border-[#324d67]"
                 />
               </div>
               <Button
                 type="submit"
+                disabled={updateProfile.isPending}
                 className="w-full bg-blue-600 hover:bg-blue-700 text-white"
               >
-                Save Changes
+                {updateProfile.isPending ? "Saving..." : "Save Changes"}
               </Button>
             </form>
           </CardContent>

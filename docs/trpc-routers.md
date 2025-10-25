@@ -76,6 +76,13 @@ This document summarizes every procedure exposed under `src/server/api/routers` 
 | `updateRsvpSpeed` | protected mutation | `{ deckId: cuid, rsvpSpeedWPM: number (100-1000) }` | Updates RSVP speed on existing session. Ownership enforced. |
 | `regenerate` | protected mutation | `{ deckId: cuid }` | Requires existing session and documents. Regenerates summary via Gemini and updates session. |
 
+## userRouter (`user.*`)
+
+| Procedure | Type | Input | Notes |
+| --- | --- | --- | --- |
+| `getCurrentUser` | protected query | _none_ | Returns the authenticated user's profile with `{ id, name, email, image, emailVerified }`. Throws `NOT_FOUND` if user doesn't exist. |
+| `updateProfile` | protected mutation | `{ name?: string (1-100), email?: email }` | Updates the user's name and/or email. Validates that email is not already in use by another user. Returns updated user profile. |
+
 ---
 
 ### Usage Tips for Frontend Integration

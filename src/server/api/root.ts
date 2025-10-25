@@ -5,6 +5,7 @@ import { quizRouter } from "~/server/api/routers/quiz";
 import { quizAttemptRouter } from "~/server/api/routers/quizAttempt";
 import { gamificationRouter } from "~/server/api/routers/gamification";
 import { flashcardRouter } from "~/server/api/routers/flashcard";
+import { userRouter } from "~/server/api/routers/user";
 import { createCallerFactory, createTRPCRouter } from "~/server/api/trpc";
 
 export const appRouter = createTRPCRouter({
@@ -15,6 +16,7 @@ export const appRouter = createTRPCRouter({
   quizAttempt: quizAttemptRouter,
   gamification: gamificationRouter,
   flashcard: flashcardRouter,
+  user: userRouter,
 });
 
 export type AppRouter = typeof appRouter;
