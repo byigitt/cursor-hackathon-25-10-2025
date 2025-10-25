@@ -44,15 +44,6 @@ This document summarizes every procedure exposed under `src/server/api/routers` 
 | `getMyStreak` | protected query | _none_ | Retrieves or auto-creates the caller's streak record `{ currentStreak, longestStreak, lastActivityDate }`. |
 | `getLeaderboard` | public query | `{ limit?: number (1-100, default 10) }` | Returns top streaks sorted by `longestStreak desc` as array `{ rank, userId, userName, userImage, currentStreak, longestStreak, lastActivityDate }`. Only users with `longestStreak > 0` appear. |
 
-## postRouter (`post.*`)
-
-| Procedure | Type | Input | Notes |
-| --- | --- | --- | --- |
-| `hello` | public query | `{ text: string }` | Returns `{ greeting: string }`. |
-| `create` | protected mutation | `{ name: string (>=1) }` | Creates a `post` tied to current user. |
-| `getLatest` | protected query | _none_ | Returns latest post created by the user or `null`. |
-| `getSecretMessage` | protected query | _none_ | Returns the static string `"you can now see this secret message!"`. |
-
 ## quizRouter (`quiz.*`)
 
 | Procedure | Type | Input | Notes |
@@ -94,4 +85,3 @@ This document summarizes every procedure exposed under `src/server/api/routers` 
 - For quiz and study session generation, show loading states—the Gemini calls are async and may return `INTERNAL_SERVER_ERROR` if upstream AI fails.
 - When rendering quiz-taking flows, use `quiz.getById` (no answers). For review dashboards, use `quiz.getByIdWithAnswers`.
 - After submitting a quiz attempt, refresh both `quizAttempt.getMyAttempts` and `gamification.getMyStreak` if you surface streak data.
-
