@@ -13,7 +13,7 @@ export default function TermsPage() {
               <Link href="/" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
                 <BookOpenCheck className="h-6 w-6 text-[#007BFF]" />
                 <h2 className="text-xl font-bold leading-tight tracking-tight text-gray-900 dark:text-white">
-                  Hızlı Okuma Platformu
+                  Synapp
                 </h2>
               </Link>
               <ThemeToggle />
@@ -33,7 +33,7 @@ export default function TermsPage() {
                 <section>
                   <h2 className="text-2xl font-bold mb-4 text-gray-900 dark:text-white">1. Hizmet Tanımı</h2>
                   <p className="text-gray-600 dark:text-gray-400">
-                    Hızlı Okuma Platformu, kullanıcılara yapay zeka destekli doküman özetleme, RSVP (Rapid Serial Visual Presentation) tekniği ile hızlı okuma, etkileşimli quizler ve öğrenme takibi gibi hizmetler sunan bir web platformudur. Bu Kullanım Koşullarını kabul ederek, platformumuzu kullanma hakkı elde edersiniz.
+                    Synapp, kullanıcılara yapay zeka destekli doküman özetleme, RSVP (Rapid Serial Visual Presentation) tekniği ile hızlı okuma, etkileşimli quizler ve öğrenme takibi gibi hizmetler sunan bir web platformudur. Bu Kullanım Koşullarını kabul ederek, platformumuzu kullanma hakkı elde edersiniz.
                   </p>
                 </section>
 
@@ -74,7 +74,7 @@ export default function TermsPage() {
                     İçerik hakları ve fikri mülkiyet konusunda aşağıdaki hükümler geçerlidir:
                   </p>
                   <ul className="list-disc list-inside space-y-2 text-gray-600 dark:text-gray-400 ml-4">
-                    <li><strong>Platform İçeriği:</strong> Platformun tasarımı, logosu, yazılımı ve tüm içeriği Hızlı Okuma Platformu'na aittir</li>
+                    <li><strong>Platform İçeriği:</strong> Platformun tasarımı, logosu, yazılımı ve tüm içeriği Synapp'na aittir</li>
                     <li><strong>Kullanıcı İçeriği:</strong> Yüklediğiniz dokümanların mülkiyeti size aittir</li>
                     <li><strong>İşleme Lisansı:</strong> İçeriğinizi yükleyerek, platformumuzun hizmetleri sağlamak için bu içeriği işlemesine izin verirsiniz</li>
                     <li><strong>Yapay Zeka İşleme:</strong> Yüklenen içerikler, özet oluşturma ve analiz için AI sistemleri tarafından işlenebilir</li>
@@ -135,7 +135,7 @@ export default function TermsPage() {
                 <section>
                   <h2 className="text-2xl font-bold mb-4 text-gray-900 dark:text-white">9. Tazminat</h2>
                   <p className="text-gray-600 dark:text-gray-400">
-                    Platformu Kullanım Koşullarını ihlal ederek kullanmanız durumunda, bundan doğacak her türlü zarar, dava ve masraftan Hızlı Okuma Platformu'nu tazmin etmeyi kabul edersiniz.
+                    Platformu Kullanım Koşullarını ihlal ederek kullanmanız durumunda, bundan doğacak her türlü zarar, dava ve masraftan Synapp'nu tazmin etmeyi kabul edersiniz.
                   </p>
                 </section>
 
@@ -201,7 +201,7 @@ export default function TermsPage() {
                 </Link>
               </div>
               <p className="text-gray-500 dark:text-gray-400 text-sm font-normal leading-normal">
-                © 2023 Hızlı Okuma Platformu. All Rights Reserved.
+                © 2023 Synapp. All Rights Reserved.
               </p>
             </footer>
           </div>

@@ -13,7 +13,7 @@ export default function PrivacyPage() {
               <Link href="/" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
                 <BookOpenCheck className="h-6 w-6 text-[#007BFF]" />
                 <h2 className="text-xl font-bold leading-tight tracking-tight text-gray-900 dark:text-white">
-                  Hızlı Okuma Platformu
+                  Synapp
                 </h2>
               </Link>
               <ThemeToggle />
@@ -33,7 +33,7 @@ export default function PrivacyPage() {
                 <section>
                   <h2 className="text-2xl font-bold mb-4 text-gray-900 dark:text-white">1. Giriş</h2>
                   <p className="text-gray-600 dark:text-gray-400">
-                    Hızlı Okuma Platformu olarak gizliliğinize saygı duyuyor ve kişisel verilerinizi korumayı taahhüt ediyoruz. Bu Gizlilik Politikası, platformumuzu kullanırken toplanan, işlenen ve saklanan bilgiler hakkında sizi bilgilendirmeyi amaçlamaktadır.
+                    Synapp olarak gizliliğinize saygı duyuyor ve kişisel verilerinizi korumayı taahhüt ediyoruz. Bu Gizlilik Politikası, platformumuzu kullanırken toplanan, işlenen ve saklanan bilgiler hakkında sizi bilgilendirmeyi amaçlamaktadır.
                   </p>
                 </section>
 
@@ -177,7 +177,7 @@ export default function PrivacyPage() {
                 </Link>
               </div>
               <p className="text-gray-500 dark:text-gray-400 text-sm font-normal leading-normal">
-                © 2023 Hızlı Okuma Platformu. All Rights Reserved.
+                © 2023 Synapp. All Rights Reserved.
               </p>
             </footer>
           </div>

@@ -88,7 +88,7 @@ export default function ContactPage() {
               <Link href="/" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
                 <BookOpenCheck className="h-6 w-6 text-[#007BFF]" />
                 <h2 className="text-xl font-bold leading-tight tracking-tight text-gray-900 dark:text-white">
-                  Hızlı Okuma Platformu
+                  Synapp
                 </h2>
               </Link>
               <ThemeToggle />
@@ -223,7 +223,7 @@ export default function ContactPage() {
                 </Link>
               </div>
               <p className="text-gray-500 dark:text-gray-400 text-sm font-normal leading-normal">
-                © 2023 Hızlı Okuma Platformu. All Rights Reserved.
+                © 2023 Synapp. All Rights Reserved.
               </p>
             </footer>
           </div>
