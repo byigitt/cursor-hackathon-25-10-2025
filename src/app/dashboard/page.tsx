@@ -101,10 +101,12 @@ export default function DashboardPage() {
             </div>
           </div>
 
-          <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold gap-2">
-            <Upload className="h-5 w-5" />
-            <span>Upload Document</span>
-          </Button>
+          <Link href="/dashboard/knowledge-base" className="w-full">
+            <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold gap-2">
+              <Upload className="h-5 w-5" />
+              <span>Knowledge Base</span>
+            </Button>
+          </Link>
         </aside>
 
         {/* Main Content */}
