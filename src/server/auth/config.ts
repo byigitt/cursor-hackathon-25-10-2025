@@ -26,12 +26,6 @@ declare module "next-auth" {
   // }
 }
 
-declare module "@auth/core/jwt" {
-  interface JWT {
-    id: string;
-  }
-}
-
 /**
  * Options for NextAuth.js used to configure adapters, providers, callbacks, etc.
  *

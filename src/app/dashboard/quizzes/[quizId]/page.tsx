@@ -18,10 +18,13 @@ export default function QuizPage() {
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [showFeedback, setShowFeedback] = useState<Record<string, boolean>>({});
 
-  const { data: quiz, isLoading } = api.quiz.getById.useQuery({ id: quizId });
+  const { data: quiz, isLoading, error } = api.quiz.getById.useQuery({ id: quizId });
   const submitMutation = api.quizAttempt.submit.useMutation({
     onSuccess: (data) => {
       router.push(`/dashboard/quizzes/${quizId}/results/${data.attemptId}`);
+    },
+    onError: (error) => {
+      alert(`Quiz gönderilemedi: ${error.message}`);
     },
   });
 
@@ -37,11 +40,39 @@ export default function QuizPage() {
     );
   }
 
-  if (!quiz) {
+  if (error) {
     return (
-      <Alert variant="destructive">
-        <AlertDescription>Quiz bulunamadı.</AlertDescription>
-      </Alert>
+      <div className="max-w-7xl mx-auto">
+        <Alert variant="destructive">
+          <AlertDescription>
+            Quiz yüklenirken hata oluştu: {error.message}
+          </AlertDescription>
+        </Alert>
+        <Button 
+          className="mt-4" 
+          onClick={() => router.push("/dashboard/quizzes")}
+        >
+          Quizlere Dön
+        </Button>
+      </div>
+    );
+  }
+
+  if (!quiz || !quiz.questions || quiz.questions.length === 0) {
+    return (
+      <div className="max-w-7xl mx-auto">
+        <Alert variant="destructive">
+          <AlertDescription>
+            Quiz bulunamadı veya quiz soruları yok.
+          </AlertDescription>
+        </Alert>
+        <Button 
+          className="mt-4" 
+          onClick={() => router.push("/dashboard/quizzes")}
+        >
+          Quizlere Dön
+        </Button>
+      </div>
     );
   }
 
@@ -148,7 +179,7 @@ export default function QuizPage() {
             </div>
           </CardHeader>
           <CardContent className="space-y-6">
-            {currentQuestion && (
+            {currentQuestion && currentQuestion.options && currentQuestion.options.length > 0 ? (
               <div className="space-y-4">
                 <p className="text-lg font-semibold text-gray-800 dark:text-gray-200">
                   {currentQuestion.questionText}
@@ -185,6 +216,12 @@ export default function QuizPage() {
                   })}
                 </div>
               </div>
+            ) : (
+              <Alert variant="destructive">
+                <AlertDescription>
+                  Bu soru için seçenek bulunamadı.
+                </AlertDescription>
+              </Alert>
             )}
 
             <div className="flex justify-between items-center pt-6 border-t border-gray-200 dark:border-[#233648]">
