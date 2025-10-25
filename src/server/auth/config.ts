@@ -26,6 +26,12 @@ declare module "next-auth" {
   // }
 }
 
+declare module "next-auth/jwt" {
+  interface JWT {
+    id: string;
+  }
+}
+
 /**
  * Options for NextAuth.js used to configure adapters, providers, callbacks, etc.
  *
@@ -41,8 +47,11 @@ export const authConfig = {
       },
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) {
+          console.error("[Auth] Missing credentials");
           return null;
         }
+
+        console.log("[Auth] Attempting authentication for:", credentials.email);
 
         const user = await db.user.findUnique({
           where: {
@@ -51,6 +60,7 @@ export const authConfig = {
         });
 
         if (!user || !user.password) {
+          console.error("[Auth] User not found or no password set:", credentials.email);
           return null;
         }
 
@@ -60,8 +70,11 @@ export const authConfig = {
         );
 
         if (!isPasswordValid) {
+          console.error("[Auth] Invalid password for:", credentials.email);
           return null;
         }
+
+        console.log("[Auth] Authentication successful for:", credentials.email);
 
         return {
           id: user.id,
@@ -73,13 +86,26 @@ export const authConfig = {
     }),
   ],
   adapter: PrismaAdapter(db),
+  session: {
+    strategy: "jwt",
+  },
   callbacks: {
-    session: ({ session, user }) => ({
-      ...session,
-      user: {
-        ...session.user,
-        id: user.id,
-      },
-    }),
+    jwt: ({ token, user }) => {
+      if (user) {
+        console.log("[Auth] JWT callback - Adding user to token:", user.id);
+        token.id = user.id;
+      }
+      return token;
+    },
+    session: ({ session, token }) => {
+      console.log("[Auth] Session callback - Creating session for user:", token.id);
+      return {
+        ...session,
+        user: {
+          ...session.user,
+          id: token.id as string,
+        },
+      };
+    },
   },
 } satisfies NextAuthConfig;

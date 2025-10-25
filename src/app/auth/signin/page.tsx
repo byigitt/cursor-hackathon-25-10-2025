@@ -27,6 +27,7 @@ export default function SignInPage() {
     }
 
     setIsLoading(true);
+    console.log("Attempting to sign in with email:", email);
 
     try {
       const result = await signIn("credentials", {
@@ -35,13 +36,17 @@ export default function SignInPage() {
         redirect: false,
       });
 
+      console.log("Sign in result:", result);
+
       if (result?.error) {
+        console.error("Sign in failed:", result.error);
         toast.error("Invalid email or password");
         setIsLoading(false);
         return;
       }
 
       if (result?.ok) {
+        console.log("Sign in successful! Redirecting to dashboard...");
         toast.success("Signed in successfully!");
         router.push("/dashboard");
         router.refresh();
