@@ -4,11 +4,12 @@ import type { Metadata } from "next";
 import { Geist } from "next/font/google";
 
 import { TRPCReactProvider } from "~/trpc/react";
+import { Providers } from "./providers";
 
 export const metadata: Metadata = {
-  title: "Deploy First, Pray Later",
-  description: "Deploy First, Pray Later",
-  icons: [{ rel: "icon", url: "/favicon.ico" }],
+  title: "SynApps",
+  description: "hızlı öğrenme platformu",
+  icons: [{ rel: "icon", url: "/synapps.ico" }],
 };
 
 const geist = Geist({
@@ -20,9 +21,11 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className={`${geist.variable}`}>
+    <html lang="en" className={`${geist.variable}`} suppressHydrationWarning>
       <body>
-        <TRPCReactProvider>{children}</TRPCReactProvider>
+        <Providers>
+          <TRPCReactProvider>{children}</TRPCReactProvider>
+        </Providers>
       </body>
     </html>
   );
