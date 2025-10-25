@@ -76,7 +76,7 @@ Generate ${questionCount} questions now.`,
  * Choose which Gemini model to use for different tasks
  */
 export const AI_MODELS = {
-  SUMMARY: "gemini-1.5-flash", // Fast and efficient for summaries
-  QUIZ: "gemini-1.5-flash", // Good balance for quiz generation
+  SUMMARY: "gemini-2.5-flash", // Fast and efficient for summaries
+  QUIZ: "gemini-2.5-flash", // Good balance for quiz generation
   // Alternative: "gemini-1.5-pro" for higher quality at higher cost
 };
