@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { BookOpenCheck } from "lucide-react";
 import { Button } from "~/components/ui/button";
 import { ThemeToggle } from "~/components/theme-toggle";
@@ -8,8 +9,9 @@ import { auth } from "~/server/auth";
 export default async function MarketingPage() {
   const session = await auth();
 
+  // Redirect authenticated users to dashboard
   if (session?.user) {
-    void api.post.getLatest.prefetch();
+    redirect("/dashboard");
   }
 
   return (
@@ -41,16 +43,16 @@ export default async function MarketingPage() {
                   </p>
                 </div>
                 <div className="flex flex-col sm:flex-row justify-center gap-4 pt-6">
-                  <Link href="/api/auth/signin">
-                    <Button 
+                  <Link href="/auth/signin">
+                    <Button
                       size="lg"
                       className="min-w-[140px] bg-[#007BFF] hover:bg-[#007BFF]/90 text-white text-lg font-bold transition-transform duration-200 hover:scale-105 h-12 px-8"
                     >
                       Giriş Yap
                     </Button>
                   </Link>
-                  <Link href="/api/auth/signin">
-                    <Button 
+                  <Link href="/auth/signin">
+                    <Button
                       variant="outline"
                       size="lg"
                       className="min-w-[140px] border-2 border-[#007BFF] text-[#007BFF] hover:bg-[#007BFF] hover:text-white text-lg font-bold transition-colors duration-200 h-12 px-8"
@@ -65,13 +67,13 @@ export default async function MarketingPage() {
             {/* Footer */}
             <footer className="flex flex-col gap-6 px-5 py-10 text-center">
               <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-4">
-                <Link 
+                <Link
                   href="#"
                   className="text-gray-500 dark:text-gray-400 text-base font-normal leading-normal hover:text-[#007BFF] dark:hover:text-[#007BFF]"
                 >
                   Hakkında
                 </Link>
-                <Link 
+                <Link
                   href="#"
                   className="text-gray-500 dark:text-gray-400 text-base font-normal leading-normal hover:text-[#007BFF] dark:hover:text-[#007BFF]"
                 >
