@@ -15,7 +15,7 @@ import {
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 
-export default function KnowledgeBasePage() {
+export default function DocumentsPage() {
   const [activeWorkspace, setActiveWorkspace] = useState("all");
   const [viewMode, setViewMode] = useState<"grid" | "list">("list");
   const [searchQuery, setSearchQuery] = useState("");
