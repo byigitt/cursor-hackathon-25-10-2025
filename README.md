@@ -2,8 +2,8 @@
 
 ## Installation
 ```
-pnpm prisma generate
+pnpm db:generate
 // copy the .env.example file to .env and change
-pnpm prisma db push
+pnpm db:push
 pnpm run dev
 ```
