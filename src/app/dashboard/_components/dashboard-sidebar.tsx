@@ -34,7 +34,7 @@ interface DashboardSidebarProps {
 
 export default function DashboardSidebar({ user }: DashboardSidebarProps) {
   const handleSignOut = async () => {
-    await signOut({ callbackUrl: "/" });
+    await signOut({ callbackUrl: "/auth/signin" });
   };
 
   return (

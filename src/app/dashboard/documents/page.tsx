@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { Plus, Search, Grid3x3, List, FileText, Trash2, Edit2, Download, Loader2 } from "lucide-react";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
@@ -8,6 +8,27 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 import { api } from "~/trpc/react";
 import { useUploadThing } from "~/lib/uploadthing";
 import { toast } from "sonner";
+
+type Document = {
+  id: string;
+  name: string;
+  fileUrl: string;
+  fileKey: string;
+  fileType: string;
+  fileSize: number;
+  createdAt: Date;
+  deckId: string;
+};
+
+type Deck = {
+  id: string;
+  name: string;
+  _count: {
+    documents: number;
+    quizzes: number;
+    flashcards: number;
+  };
+};
 
 export default function DocumentsPage() {
   const [activeDeckId, setActiveDeckId] = useState<string | null>(null);
@@ -20,6 +41,7 @@ export default function DocumentsPage() {
   const [selectedDocument, setSelectedDocument] = useState<{ id: string; name: string } | null>(null);
   const [renameValue, setRenameValue] = useState("");
   const [uploadingFiles, setUploadingFiles] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
 
   const utils = api.useUtils();
 
@@ -89,10 +111,12 @@ export default function DocumentsPage() {
     onClientUploadComplete: (files) => {
       if (!activeDeckId) {
         toast.error("Please select a deck first");
+        setUploadingFiles(false);
         return;
       }
 
-      files.forEach((file) => {
+      // Process each uploaded file
+      const documentPromises = files.map((file) => {
         const fileExtension = file.name.split(".").pop()?.toLowerCase();
         let fileType: "pdf" | "txt" | "doc" | "docx" = "txt";
 
@@ -101,7 +125,7 @@ export default function DocumentsPage() {
         else if (fileExtension === "docx") fileType = "docx";
         else if (fileExtension === "txt") fileType = "txt";
 
-        createDocument.mutate({
+        return createDocument.mutateAsync({
           deckId: activeDeckId,
           name: file.name,
           fileUrl: file.url,
@@ -111,7 +135,17 @@ export default function DocumentsPage() {
         });
       });
 
-      setUploadingFiles(false);
+      // Wait for all documents to be created
+      Promise.all(documentPromises)
+        .then(() => {
+          toast.success(`Successfully uploaded ${files.length} document(s)`);
+          setUploadingFiles(false);
+        })
+        .catch((error) => {
+          console.error("Error creating documents:", error);
+          toast.error("Some documents failed to save");
+          setUploadingFiles(false);
+        });
     },
     onUploadError: (error) => {
       toast.error(error.message || "Upload failed");
@@ -133,6 +167,58 @@ export default function DocumentsPage() {
     }
 
     void startUpload(Array.from(files));
+  }, [activeDeckId, startUpload]);
+
+  // Handle drag & drop
+  const handleDragEnter = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (activeDeckId) {
+      setIsDragging(true);
+    }
+  }, [activeDeckId]);
+
+  const handleDragLeave = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(false);
+  }, []);
+
+  const handleDragOver = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+  }, []);
+
+  const handleDrop = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(false);
+
+    if (!activeDeckId) {
+      toast.error("Please select a deck first");
+      return;
+    }
+
+    const files = Array.from(e.dataTransfer.files);
+    if (files.length === 0) return;
+
+    // Validate file types
+    const allowedTypes = ['.pdf', '.txt', '.doc', '.docx'];
+    const validFiles = files.filter(file => {
+      const ext = '.' + file.name.split('.').pop()?.toLowerCase();
+      return allowedTypes.includes(ext);
+    });
+
+    if (validFiles.length === 0) {
+      toast.error("Please upload PDF, TXT, DOC, or DOCX files");
+      return;
+    }
+
+    if (validFiles.length < files.length) {
+      toast.warning(`${files.length - validFiles.length} file(s) skipped - unsupported format`);
+    }
+
+    void startUpload(validFiles);
   }, [activeDeckId, startUpload]);
 
   // Handle deck creation
@@ -160,7 +246,7 @@ export default function DocumentsPage() {
   };
 
   // Filter documents based on search
-  const filteredDocuments = documents?.filter((doc) =>
+  const filteredDocuments = documents?.filter((doc: Document) =>
     doc.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
@@ -171,10 +257,41 @@ export default function DocumentsPage() {
     return (bytes / (1024 * 1024)).toFixed(2) + " MB";
   };
 
-  // Set initial active deck
-  if (decks && decks.length > 0 && !activeDeckId) {
-    setActiveDeckId(decks[0]!.id);
-  }
+  // Format date
+  const formatDate = (date: Date) => {
+    const now = new Date();
+    const diffInMs = now.getTime() - new Date(date).getTime();
+    const diffInMinutes = Math.floor(diffInMs / 60000);
+    const diffInHours = Math.floor(diffInMs / 3600000);
+    const diffInDays = Math.floor(diffInMs / 86400000);
+
+    if (diffInMinutes < 1) return "Just now";
+    if (diffInMinutes < 60) return `${diffInMinutes}m ago`;
+    if (diffInHours < 24) return `${diffInHours}h ago`;
+    if (diffInDays < 7) return `${diffInDays}d ago`;
+    
+    return new Date(date).toLocaleDateString('en-US', { 
+      month: 'short', 
+      day: 'numeric',
+      year: new Date(date).getFullYear() !== now.getFullYear() ? 'numeric' : undefined
+    });
+  };
+
+  // Get file name without extension for better display
+  const getDisplayName = (fileName: string) => {
+    const lastDotIndex = fileName.lastIndexOf('.');
+    if (lastDotIndex > 0) {
+      return fileName.substring(0, lastDotIndex);
+    }
+    return fileName;
+  };
+
+  // Set initial active deck when decks are loaded
+  useEffect(() => {
+    if (decks && decks.length > 0 && !activeDeckId) {
+      setActiveDeckId(decks[0]!.id);
+    }
+  }, [decks, activeDeckId]);
 
   return (
     <div className="flex flex-col max-w-[960px] mx-auto">
@@ -192,10 +309,24 @@ export default function DocumentsPage() {
 
       {/* Upload Area */}
       <div className="flex flex-col p-4">
-        <div className="flex flex-col items-center gap-6 rounded-xl border-2 border-dashed border-gray-300 dark:border-[#324d67] px-6 py-14 bg-white dark:bg-[#101922]/50">
+        <div 
+          className={`flex flex-col items-center gap-6 rounded-xl border-2 border-dashed px-6 py-14 transition-all ${
+            isDragging 
+              ? "border-blue-500 bg-blue-50 dark:bg-blue-900/20" 
+              : "border-gray-300 dark:border-[#324d67] bg-white dark:bg-[#101922]/50"
+          } ${!activeDeckId ? "opacity-50 cursor-not-allowed" : ""}`}
+          onDragEnter={handleDragEnter}
+          onDragOver={handleDragOver}
+          onDragLeave={handleDragLeave}
+          onDrop={handleDrop}
+        >
           <div className="flex max-w-[480px] flex-col items-center gap-2">
             <p className="text-lg font-bold leading-tight tracking-[-0.015em] max-w-[480px] text-center text-gray-900 dark:text-white">
-              {activeDeckId ? "Drag and drop files here or click to select" : "Please select a deck first"}
+              {isDragging 
+                ? "Drop files here" 
+                : activeDeckId 
+                  ? "Drag and drop files here or click to select" 
+                  : "Please select a deck first"}
             </p>
             <p className="text-sm font-normal leading-normal max-w-[480px] text-center text-gray-500 dark:text-white/70">
               Supported formats: PDF, DOCX, TXT, DOC (max 10 files)
@@ -251,17 +382,26 @@ export default function DocumentsPage() {
             <div className="flex items-center justify-between gap-4 mb-4">
               {/* Deck Tabs */}
               <div className="flex items-center gap-2 flex-wrap">
-                {decks?.map((deck) => (
+                {decks?.map((deck: Deck) => (
                   <button
                     key={deck.id}
                     onClick={() => setActiveDeckId(deck.id)}
-                    className={`px-4 py-2 text-sm font-semibold rounded-lg transition-colors ${
+                    className={`px-4 py-2 text-sm font-semibold rounded-lg transition-colors flex items-center gap-2 ${
                       activeDeckId === deck.id
                         ? "bg-blue-600 text-white"
                         : "text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700/50"
                     }`}
                   >
-                    {deck.name}
+                    <span>{deck.name}</span>
+                    {deck._count.documents > 0 && (
+                      <span className={`text-xs px-1.5 py-0.5 rounded-full ${
+                        activeDeckId === deck.id
+                          ? "bg-white/20"
+                          : "bg-gray-200 dark:bg-gray-700"
+                      }`}>
+                        {deck._count.documents}
+                      </span>
+                    )}
                   </button>
                 ))}
                 <button
@@ -325,7 +465,7 @@ export default function DocumentsPage() {
               </div>
             ) : (
               <div className={viewMode === "grid" ? "grid grid-cols-1 md:grid-cols-2 gap-4" : "flex flex-col gap-2"}>
-                {filteredDocuments.map((doc) => (
+                {filteredDocuments.map((doc: Document) => (
                   <div
                     key={doc.id}
                     className="flex items-center gap-4 p-4 rounded-lg border border-gray-200 dark:border-[#324d67] bg-white dark:bg-[#1a2633] hover:border-blue-600 dark:hover:border-blue-500 transition-colors"
@@ -336,9 +476,11 @@ export default function DocumentsPage() {
                       </div>
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="font-semibold text-gray-900 dark:text-white truncate">{doc.name}</p>
+                      <p className="font-semibold text-gray-900 dark:text-white truncate" title={doc.name}>
+                        {getDisplayName(doc.name)}
+                      </p>
                       <p className="text-sm text-gray-500 dark:text-gray-400">
-                        {formatFileSize(doc.fileSize)} • {doc.fileType.toUpperCase()}
+                        {formatFileSize(doc.fileSize)} • {doc.fileType.toUpperCase()} • {formatDate(doc.createdAt)}
                       </p>
                     </div>
                     <div className="flex items-center gap-2">

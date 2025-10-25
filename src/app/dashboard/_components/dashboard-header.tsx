@@ -27,7 +27,7 @@ export default function DashboardHeader({ user }: DashboardHeaderProps) {
   const [searchQuery, setSearchQuery] = useState("");
 
   const handleSignOut = async () => {
-    await signOut({ callbackUrl: "/" });
+    await signOut({ callbackUrl: "/auth/signin" });
   };
 
   return (

@@ -83,7 +83,7 @@ export const documentRouter = createTRPCRouter({
           deckId: input.deckId,
         },
         orderBy: {
-          createdAt: "asc",
+          createdAt: "desc",
         },
       });
 
