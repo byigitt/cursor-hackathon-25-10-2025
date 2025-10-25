@@ -14,6 +14,7 @@ import {
   Upload,
   User,
   LogOut,
+  Info,
 } from "lucide-react";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
@@ -39,9 +40,9 @@ export default function DashboardLayout({
       <header className="sticky top-0 z-10 flex h-16 shrink-0 items-center justify-between whitespace-nowrap border-b border-gray-200 dark:border-[#233648] bg-gray-50 dark:bg-[#101922] px-4 sm:px-6 lg:px-8">
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-2 text-blue-600 dark:text-blue-500">
-            <BookOpen className="h-8 w-8" />
+            <img src="/synapp-logo-white.svg" alt="Synapp Logo" className="h-8 w-8 invert dark:invert-0" />
             <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 dark:text-white">
-              Learnify
+              Synapp
             </h1>
           </div>
         </div>
@@ -137,6 +138,17 @@ export default function DashboardLayout({
               >
                 <CreditCard className="h-5 w-5" />
                 <p className="text-sm font-medium leading-normal">Flashcards</p>
+              </Link>
+            </div>
+            
+            {/* Help Section */}
+            <div className="pt-4 mt-4 border-t border-gray-200 dark:border-[#233648]">
+              <Link
+                href="/dashboard/how-to-use"
+                className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-white/5 text-gray-700 dark:text-white transition-colors"
+              >
+                <Info className="h-5 w-5" />
+                <p className="text-sm font-medium leading-normal">Nasıl Kullanılır?</p>
               </Link>
             </div>
           </div>
