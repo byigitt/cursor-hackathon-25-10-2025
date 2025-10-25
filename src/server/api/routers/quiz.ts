@@ -146,42 +146,75 @@ export const quizRouter = createTRPCRouter({
   getById: protectedProcedure
     .input(getQuizByIdSchema)
     .query(async ({ ctx, input }) => {
-      const quiz = await ctx.db.quiz.findUnique({
-        where: {
-          id: input.id,
-        },
-        include: {
-          deck: true,
-          questions: {
-            include: {
-              options: {
-                select: {
-                  id: true,
-                  optionText: true,
-                  // Do NOT include isCorrect - hide correct answers
+      try {
+        const quiz = await ctx.db.quiz.findUnique({
+          where: {
+            id: input.id,
+          },
+          include: {
+            deck: {
+              select: {
+                id: true,
+                name: true,
+                userId: true,
+                createdAt: true,
+                updatedAt: true,
+              },
+            },
+            questions: {
+              include: {
+                options: {
+                  select: {
+                    id: true,
+                    optionText: true,
+                    // Do NOT include isCorrect - hide correct answers
+                  },
                 },
+              },
+              orderBy: {
+                id: 'asc',
               },
             },
           },
-        },
-      });
+        });
 
-      if (!quiz) {
+        if (!quiz) {
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: "Quiz not found",
+          });
+        }
+
+        // Verify ownership through deck
+        if (quiz.deck.userId !== ctx.session.user.id) {
+          throw new TRPCError({
+            code: "FORBIDDEN",
+            message: "You don't have permission to access this quiz",
+          });
+        }
+
+        // Ensure questions exist
+        if (!quiz.questions || quiz.questions.length === 0) {
+          throw new TRPCError({
+            code: "INTERNAL_SERVER_ERROR",
+            message: "Quiz has no questions",
+          });
+        }
+
+        // Log for debugging
+        console.log(`📚 Fetched quiz ${quiz.id} with ${quiz.questions.length} questions`);
+
+        return quiz;
+      } catch (error) {
+        console.error("Error fetching quiz:", error);
+        if (error instanceof TRPCError) {
+          throw error;
+        }
         throw new TRPCError({
-          code: "NOT_FOUND",
-          message: "Quiz not found",
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Failed to fetch quiz",
         });
       }
-
-      // Verify ownership through deck
-      if (quiz.deck.userId !== ctx.session.user.id) {
-        throw new TRPCError({
-          code: "FORBIDDEN",
-          message: "You don't have permission to access this quiz",
-        });
-      }
-
-      return quiz;
     }),
 
   // READ: Get quiz by ID with correct answers (for review)

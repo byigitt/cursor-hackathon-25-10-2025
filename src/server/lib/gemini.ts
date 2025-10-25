@@ -210,8 +210,44 @@ export async function generateQuizQuestions(
       .replace(/```\n?/g, "")
       .trim();
 
-    // Parse and validate
-    const questions = JSON.parse(generatedText) as QuizQuestion[];
+    // Extract JSON array more reliably - find the actual JSON content
+    let jsonText = generatedText;
+    const firstBracket = generatedText.indexOf('[');
+    const lastBracket = generatedText.lastIndexOf(']');
+    
+    if (firstBracket !== -1 && lastBracket !== -1 && lastBracket > firstBracket) {
+      jsonText = generatedText.substring(firstBracket, lastBracket + 1);
+    }
+
+    // Try parsing with fallback strategies
+    let questions: QuizQuestion[];
+    try {
+      questions = JSON.parse(jsonText) as QuizQuestion[];
+    } catch (parseError) {
+      console.error("Initial JSON parse failed, attempting cleanup...");
+      console.error("Raw response (first 500 chars):", generatedText.substring(0, 500));
+      
+      // Attempt common fixes
+      try {
+        // Remove potential trailing commas before closing brackets
+        let cleanedJson = jsonText
+          .replace(/,(\s*[}\]])/g, '$1')
+          // Fix common escape issues
+          .replace(/\\'/g, "'")
+          .replace(/\n/g, " ")
+          .replace(/\r/g, "");
+        
+        questions = JSON.parse(cleanedJson) as QuizQuestion[];
+        console.log("✅ JSON parsed successfully after cleanup");
+      } catch (fallbackError) {
+        console.error("Fallback parsing also failed");
+        console.error("Cleaned JSON (first 500 chars):", jsonText.substring(0, 500));
+        throw new Error(
+          `Failed to parse quiz JSON: ${parseError instanceof Error ? parseError.message : "Unknown error"}. ` +
+          `Response preview: ${generatedText.substring(0, 200)}...`
+        );
+      }
+    }
 
     if (!Array.isArray(questions) || questions.length === 0) {
       throw new Error("Invalid quiz format: expected array of questions");

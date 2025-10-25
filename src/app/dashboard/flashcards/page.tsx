@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { Search, Pencil, Trash2, Sparkles } from "lucide-react";
+import { useState, useMemo } from "react";
+import { Search, Pencil, Trash2, Sparkles, X, ChevronLeft, ChevronRight, RotateCw } from "lucide-react";
 import { api } from "~/trpc/react";
 import { toast } from "sonner";
 import { Button } from "~/components/ui/button";
@@ -24,12 +24,23 @@ import {
   SelectValue,
 } from "~/components/ui/select";
 import { Skeleton } from "~/components/ui/skeleton";
+import { Progress } from "~/components/ui/progress";
 
 type Flashcard = {
   id: string;
   frontText: string;
   backText: string;
 };
+
+// Shuffle array using Fisher-Yates algorithm
+function shuffleArray<T>(array: T[]): T[] {
+  const shuffled = [...array];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j]!, shuffled[i]!];
+  }
+  return shuffled;
+}
 
 export default function FlashcardsPage() {
   const utils = api.useUtils();
@@ -41,6 +52,13 @@ export default function FlashcardsPage() {
   const [editingCard, setEditingCard] = useState<Flashcard | null>(null);
   const [formData, setFormData] = useState({ frontText: "", backText: "" });
   const [cardCount, setCardCount] = useState(10);
+  
+  // Practice mode state
+  const [isPracticing, setIsPracticing] = useState(false);
+  const [currentCardIndex, setCurrentCardIndex] = useState(0);
+  const [isCardFlipped, setIsCardFlipped] = useState(false);
+  const [practiceCards, setPracticeCards] = useState<Flashcard[]>([]);
+  const [reviewedCards, setReviewedCards] = useState<Set<string>>(new Set());
 
   // Fetch all decks
   const { data: decks, isLoading: decksLoading } = api.deck.getAll.useQuery();
@@ -154,7 +172,48 @@ export default function FlashcardsPage() {
   };
 
   const handleStartPractice = () => {
-    alert("Practice mode coming soon!");
+    if (filteredFlashcards.length === 0) {
+      toast.error("No flashcards to practice");
+      return;
+    }
+    
+    // Shuffle cards and start practice session
+    const shuffled = shuffleArray(filteredFlashcards);
+    setPracticeCards(shuffled);
+    setCurrentCardIndex(0);
+    setIsCardFlipped(false);
+    setReviewedCards(new Set());
+    setIsPracticing(true);
+  };
+
+  const handleFlipCard = () => {
+    setIsCardFlipped(!isCardFlipped);
+  };
+
+  const handleNextCard = () => {
+    if (currentCardIndex < practiceCards.length - 1) {
+      setCurrentCardIndex(currentCardIndex + 1);
+      setIsCardFlipped(false);
+      if (practiceCards[currentCardIndex]) {
+        setReviewedCards(new Set(reviewedCards).add(practiceCards[currentCardIndex]!.id));
+      }
+    }
+  };
+
+  const handlePreviousCard = () => {
+    if (currentCardIndex > 0) {
+      setCurrentCardIndex(currentCardIndex - 1);
+      setIsCardFlipped(false);
+    }
+  };
+
+  const handleEndPractice = () => {
+    setIsPracticing(false);
+    setPracticeCards([]);
+    setCurrentCardIndex(0);
+    setIsCardFlipped(false);
+    setReviewedCards(new Set());
+    toast.success(`Practice session completed! Reviewed ${reviewedCards.size + 1} cards.`);
   };
 
   const handleGenerate = () => {
@@ -175,6 +234,11 @@ export default function FlashcardsPage() {
       cardCount,
     });
   };
+
+  const currentCard = practiceCards[currentCardIndex];
+  const progressPercentage = practiceCards.length > 0 
+    ? ((currentCardIndex + 1) / practiceCards.length) * 100 
+    : 0;
 
   return (
     <>
@@ -544,6 +608,140 @@ export default function FlashcardsPage() {
                 </>
               )}
             </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Practice Mode Dialog */}
+      <Dialog open={isPracticing} onOpenChange={setIsPracticing}>
+        <DialogContent className="max-w-4xl bg-white dark:bg-[#1a2633] border-gray-200 dark:border-[#324d67]">
+          <DialogHeader>
+            <div className="flex items-center justify-between">
+              <DialogTitle className="text-gray-900 dark:text-white">Practice Mode</DialogTitle>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={handleEndPractice}
+                className="h-8 w-8"
+              >
+                <X className="h-4 w-4" />
+              </Button>
+            </div>
+            <DialogDescription className="text-gray-500 dark:text-[#92adc9]">
+              Card {currentCardIndex + 1} of {practiceCards.length}
+            </DialogDescription>
+          </DialogHeader>
+
+          {/* Progress Bar */}
+          <div className="space-y-2">
+            <Progress value={progressPercentage} className="h-2" />
+          </div>
+
+          {/* Flashcard */}
+          {currentCard && (
+            <div className="py-8">
+              <div
+                onClick={handleFlipCard}
+                className="relative min-h-[300px] cursor-pointer perspective-1000"
+              >
+                <div
+                  className={`relative w-full h-full transition-all duration-500 transform-style-3d ${
+                    isCardFlipped ? "rotate-y-180" : ""
+                  }`}
+                  style={{
+                    transformStyle: "preserve-3d",
+                    transform: isCardFlipped ? "rotateY(180deg)" : "rotateY(0deg)",
+                  }}
+                >
+                  {/* Front of card */}
+                  <div
+                    className={`absolute inset-0 flex flex-col items-center justify-center p-8 rounded-xl border-2 border-blue-200 dark:border-blue-900 bg-gradient-to-br from-blue-50 to-white dark:from-blue-950/30 dark:to-[#1a2633] backface-hidden ${
+                      isCardFlipped ? "invisible" : "visible"
+                    }`}
+                    style={{
+                      backfaceVisibility: "hidden",
+                    }}
+                  >
+                    <p className="text-sm font-medium text-blue-600 dark:text-blue-400 mb-4">
+                      Question
+                    </p>
+                    <p className="text-2xl font-semibold text-center text-gray-900 dark:text-white">
+                      {currentCard.frontText}
+                    </p>
+                    <p className="text-sm text-gray-500 dark:text-[#92adc9] mt-8">
+                      Click to reveal answer
+                    </p>
+                  </div>
+
+                  {/* Back of card */}
+                  <div
+                    className={`absolute inset-0 flex flex-col items-center justify-center p-8 rounded-xl border-2 border-green-200 dark:border-green-900 bg-gradient-to-br from-green-50 to-white dark:from-green-950/30 dark:to-[#1a2633] backface-hidden ${
+                      isCardFlipped ? "visible" : "invisible"
+                    }`}
+                    style={{
+                      backfaceVisibility: "hidden",
+                      transform: "rotateY(180deg)",
+                    }}
+                  >
+                    <p className="text-sm font-medium text-green-600 dark:text-green-400 mb-4">
+                      Answer
+                    </p>
+                    <p className="text-2xl font-semibold text-center text-gray-900 dark:text-white">
+                      {currentCard.backText}
+                    </p>
+                    <p className="text-sm text-gray-500 dark:text-[#92adc9] mt-8">
+                      Click to see question
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Flip Button (alternative to clicking card) */}
+              <div className="flex justify-center mt-6">
+                <Button
+                  onClick={handleFlipCard}
+                  variant="outline"
+                  className="gap-2"
+                >
+                  <RotateCw className="h-4 w-4" />
+                  {isCardFlipped ? "Show Question" : "Show Answer"}
+                </Button>
+              </div>
+            </div>
+          )}
+
+          {/* Navigation */}
+          <DialogFooter className="flex-row justify-between items-center sm:justify-between">
+            <Button
+              variant="outline"
+              onClick={handlePreviousCard}
+              disabled={currentCardIndex === 0}
+              className="gap-2"
+            >
+              <ChevronLeft className="h-4 w-4" />
+              Previous
+            </Button>
+            
+            <div className="text-sm text-gray-500 dark:text-[#92adc9]">
+              {currentCardIndex + 1} / {practiceCards.length}
+            </div>
+
+            {currentCardIndex < practiceCards.length - 1 ? (
+              <Button
+                onClick={handleNextCard}
+                className="bg-blue-600 hover:bg-blue-700 text-white gap-2"
+              >
+                Next
+                <ChevronRight className="h-4 w-4" />
+              </Button>
+            ) : (
+              <Button
+                onClick={handleEndPractice}
+                className="bg-green-600 hover:bg-green-700 text-white"
+              >
+                Finish Practice
+              </Button>
+            )}
           </DialogFooter>
         </DialogContent>
       </Dialog>

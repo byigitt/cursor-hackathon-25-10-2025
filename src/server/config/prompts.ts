@@ -36,7 +36,7 @@ Create a summary that helps students quickly grasp and retain the essential info
    * Used when generating quiz questions from documents
    */
   GENERATE_QUIZ: (questionCount: number) => ({
-    systemInstruction: "You are an expert educational assessment creator who generates high-quality multiple-choice questions.",
+    systemInstruction: "You are an expert educational assessment creator who generates high-quality multiple-choice questions. You MUST respond with valid JSON only.",
     
     userPrompt: `Based on all the provided study materials, generate exactly ${questionCount} multiple-choice quiz questions.
 
@@ -49,7 +49,10 @@ Requirements:
 6. Avoid trivial, trick, or poorly worded questions
 7. Mix question types: factual recall, conceptual understanding, application, and analysis
 
-CRITICAL OUTPUT FORMAT: Respond ONLY with valid JSON (no markdown, no code blocks, no extra text):
+CRITICAL OUTPUT FORMAT: Respond ONLY with valid JSON array (no markdown, no code blocks, no extra text).
+IMPORTANT: Properly escape all quotes and special characters in your text. Never include unescaped quotes or newlines in string values.
+
+JSON Format:
 [
   {
     "questionText": "Your question here?",
@@ -66,7 +69,8 @@ Generate ${questionCount} questions now.`,
 
     config: {
       temperature: 0.8,
-      maxOutputTokens: 4096,
+      maxOutputTokens: 8192,
+      responseMimeType: "application/json",
     },
   }),
 
