@@ -22,10 +22,10 @@ export default function HowToUsePage() {
       <div className="flex flex-col gap-6 mb-8">
         <div className="flex flex-col gap-2">
           <h1 className="text-3xl font-bold leading-tight tracking-tight text-gray-900 dark:text-white">
-            Synapp'ı Nasıl Kullanırım?
+            How to Use Synapp?
           </h1>
           <p className="text-base font-normal leading-normal text-gray-500 dark:text-[#92adc9]">
-            Öğrenme deneyiminizi maksimize etmek için platformumuzu kullanmanın tüm yollarını keşfedin.
+            Discover all the ways to use our platform to maximize your learning experience.
           </p>
         </div>
 
@@ -36,10 +36,10 @@ export default function HowToUsePage() {
               <Lightbulb className="h-6 w-6" />
             </div>
             <div className="flex-1">
-              <h2 className="text-xl font-bold mb-2">Hoş Geldiniz!</h2>
+              <h2 className="text-xl font-bold mb-2">Welcome!</h2>
               <p className="text-white/90">
-                Synapp, yapay zeka destekli bir öğrenme platformudur. Dokümanlarınızı yükleyin,
-                hızlı okuma ile öğrenin, testler çözün ve bilgi kartlarıyla pekiştirin!
+                Synapp is an AI-powered learning platform. Upload your documents,
+                learn with fast reading, solve quizzes, and reinforce with flashcards!
               </p>
             </div>
           </div>
@@ -49,7 +49,7 @@ export default function HowToUsePage() {
       {/* Quick Start Guide */}
       <section className="mb-10">
         <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
-          Hızlı Başlangıç Rehberi
+          Quick Start Guide
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <div className="rounded-xl border border-gray-200 dark:border-[#324d67] bg-white dark:bg-[#1a2633] p-6">
@@ -60,10 +60,10 @@ export default function HowToUsePage() {
                 </div>
               </div>
               <h3 className="font-semibold text-gray-900 dark:text-white">
-                Doküman Yükleyin
+                Upload Document
               </h3>
               <p className="text-sm text-gray-500 dark:text-[#92adc9]">
-                PDF, Word veya metin dosyalarınızı sisteme yükleyin
+                Upload your PDF, Word, or text files to the system
               </p>
             </div>
           </div>
@@ -76,10 +76,10 @@ export default function HowToUsePage() {
                 </div>
               </div>
               <h3 className="font-semibold text-gray-900 dark:text-white">
-                AI İle Analiz Edin
+                AI Analysis
               </h3>
               <p className="text-sm text-gray-500 dark:text-[#92adc9]">
-                Gemini AI dokümanınızı analiz edip özet çıkarır
+                AI analyzes your document and creates summaries
               </p>
             </div>
           </div>
@@ -92,10 +92,10 @@ export default function HowToUsePage() {
                 </div>
               </div>
               <h3 className="font-semibold text-gray-900 dark:text-white">
-                Hızlı Okuyun
+                Speed Read
               </h3>
               <p className="text-sm text-gray-500 dark:text-[#92adc9]">
-                RSVP teknolojisi ile 2-3x daha hızlı okuyun
+                Read 20x faster with RSVP technology
               </p>
             </div>
           </div>
@@ -108,10 +108,10 @@ export default function HowToUsePage() {
                 </div>
               </div>
               <h3 className="font-semibold text-gray-900 dark:text-white">
-                Test Çözün
+                Take Quizzes
               </h3>
               <p className="text-sm text-gray-500 dark:text-[#92adc9]">
-                AI tarafından oluşturulan testlerle bilginizi ölçün
+                Test your knowledge with AI-generated quizzes
               </p>
             </div>
           </div>
@@ -121,7 +121,7 @@ export default function HowToUsePage() {
       {/* Feature Details */}
       <section className="mb-10">
         <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
-          Özellikler ve Kullanımları
+          Features and Usage
         </h2>
 
         <div className="space-y-6">
@@ -133,34 +133,34 @@ export default function HowToUsePage() {
               </div>
               <div className="flex-1">
                 <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
-                  📄 Doküman Yönetimi
+                  📄 Document Management
                 </h3>
                 <p className="text-gray-600 dark:text-[#92adc9] mb-4">
-                  Öğrenmek istediğiniz her türlü dokümanı sisteme yükleyebilirsiniz.
+                  Upload any type of document you want to learn from to the system.
                 </p>
                 <div className="space-y-2 mb-4">
                   <div className="flex items-start gap-2">
                     <CheckCircle className="h-5 w-5 text-green-600 dark:text-green-500 mt-0.5" />
                     <p className="text-sm text-gray-700 dark:text-gray-300">
-                      <strong>Desteklenen formatlar:</strong> PDF, DOCX, TXT ve daha fazlası
+                      <strong>Supported formats:</strong> PDF, DOCX, TXT and more
                     </p>
                   </div>
                   <div className="flex items-start gap-2">
                     <CheckCircle className="h-5 w-5 text-green-600 dark:text-green-500 mt-0.5" />
                     <p className="text-sm text-gray-700 dark:text-gray-300">
-                      <strong>Organizasyon:</strong> Dokümanlarınızı desteler (decks) halinde düzenleyin
+                      <strong>Organization:</strong> Organize your documents in decks
                     </p>
                   </div>
                   <div className="flex items-start gap-2">
                     <CheckCircle className="h-5 w-5 text-green-600 dark:text-green-500 mt-0.5" />
                     <p className="text-sm text-gray-700 dark:text-gray-300">
-                      <strong>Arama:</strong> Tüm dokümanlarınızda hızlıca arama yapın
+                      <strong>Search:</strong> Quickly search across all your documents
                     </p>
                   </div>
                 </div>
                 <Link href="/dashboard/documents">
                   <Button className="bg-blue-600 hover:bg-blue-700 text-white">
-                    Dokümanları Görüntüle
+                    View Documents
                     <ArrowRight className="ml-2 h-4 w-4" />
                   </Button>
                 </Link>
@@ -176,40 +176,40 @@ export default function HowToUsePage() {
               </div>
               <div className="flex-1">
                 <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
-                  ⚡ Hızlı Okuma (RSVP)
+                  ⚡ Speed Reading (RSVP)
                 </h3>
                 <p className="text-gray-600 dark:text-[#92adc9] mb-4">
-                  RSVP (Rapid Serial Visual Presentation) teknolojisi ile okuma hızınızı 2-3 kat artırın.
+                  Increase your reading speed by 20x with RSVP (Rapid Serial Visual Presentation) technology.
                 </p>
                 <div className="space-y-2 mb-4">
                   <div className="flex items-start gap-2">
                     <CheckCircle className="h-5 w-5 text-green-600 dark:text-green-500 mt-0.5" />
                     <p className="text-sm text-gray-700 dark:text-gray-300">
-                      <strong>Ayarlanabilir hız:</strong> Dakikada 200-800 kelime arasında okuma hızı
+                      <strong>Adjustable speed:</strong> Reading speed between 200-800 words per minute
                     </p>
                   </div>
                   <div className="flex items-start gap-2">
                     <CheckCircle className="h-5 w-5 text-green-600 dark:text-green-500 mt-0.5" />
                     <p className="text-sm text-gray-700 dark:text-gray-300">
-                      <strong>Odaklanma:</strong> Tek kelime odaklanma ile daha iyi konsantrasyon
+                      <strong>Focus:</strong> Better concentration with single-word focus
                     </p>
                   </div>
                   <div className="flex items-start gap-2">
                     <CheckCircle className="h-5 w-5 text-green-600 dark:text-green-500 mt-0.5" />
                     <p className="text-sm text-gray-700 dark:text-gray-300">
-                      <strong>AI Özeti:</strong> Gemini AI tarafından oluşturulan özetleri okuyun
+                      <strong>AI Summary:</strong> Read summaries generated by AI
                     </p>
                   </div>
                 </div>
                 <div className="bg-blue-50 dark:bg-blue-500/10 rounded-lg p-4 mb-4">
                   <p className="text-sm text-gray-700 dark:text-gray-300">
-                    <strong>💡 İpucu:</strong> Başlangıçta 300 WPM (kelime/dakika) ile başlayıp 
-                    yavaş yavaş hızınızı artırın. Beyin bu tekniğe hızla adapte olur!
+                    <strong>💡 Tip:</strong> Start with 300 WPM (words per minute) and gradually 
+                    increase your speed. Your brain adapts to this technique quickly!
                   </p>
                 </div>
                 <Link href="/dashboard/fast-reading">
                   <Button className="bg-blue-600 hover:bg-blue-700 text-white">
-                    Hızlı Okumaya Başla
+                    Start Speed Reading
                     <ArrowRight className="ml-2 h-4 w-4" />
                   </Button>
                 </Link>
@@ -225,34 +225,34 @@ export default function HowToUsePage() {
               </div>
               <div className="flex-1">
                 <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
-                  ❓ Testler ve Sınavlar
+                  ❓ Quizzes and Tests
                 </h3>
                 <p className="text-gray-600 dark:text-[#92adc9] mb-4">
-                  AI, dokümanlarınızdan otomatik olarak çoktan seçmeli testler oluşturur.
+                  AI automatically generates multiple-choice quizzes from your documents.
                 </p>
                 <div className="space-y-2 mb-4">
                   <div className="flex items-start gap-2">
                     <CheckCircle className="h-5 w-5 text-green-600 dark:text-green-500 mt-0.5" />
                     <p className="text-sm text-gray-700 dark:text-gray-300">
-                      <strong>Otomatik oluşturma:</strong> Her doküman için AI testler hazırlar
+                      <strong>Auto-generation:</strong> AI prepares quizzes for each document
                     </p>
                   </div>
                   <div className="flex items-start gap-2">
                     <CheckCircle className="h-5 w-5 text-green-600 dark:text-green-500 mt-0.5" />
                     <p className="text-sm text-gray-700 dark:text-gray-300">
-                      <strong>Anında geri bildirim:</strong> Cevaplarınızı hemen değerlendirin
+                      <strong>Instant feedback:</strong> Evaluate your answers immediately
                     </p>
                   </div>
                   <div className="flex items-start gap-2">
                     <CheckCircle className="h-5 w-5 text-green-600 dark:text-green-500 mt-0.5" />
                     <p className="text-sm text-gray-700 dark:text-gray-300">
-                      <strong>İlerleme takibi:</strong> Test sonuçlarınızı kaydedin ve gelişiminizi izleyin
+                      <strong>Progress tracking:</strong> Save your quiz results and track your improvement
                     </p>
                   </div>
                 </div>
                 <Link href="/dashboard/quizzes">
                   <Button className="bg-blue-600 hover:bg-blue-700 text-white">
-                    Testleri Görüntüle
+                    View Quizzes
                     <ArrowRight className="ml-2 h-4 w-4" />
                   </Button>
                 </Link>
@@ -268,34 +268,34 @@ export default function HowToUsePage() {
               </div>
               <div className="flex-1">
                 <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
-                  🎴 Bilgi Kartları (Flashcards)
+                  🎴 Flashcards
                 </h3>
                 <p className="text-gray-600 dark:text-[#92adc9] mb-4">
-                  Spaced repetition tekniği ile bilgilerinizi uzun süreli hafızaya aktarın.
+                  Transfer your knowledge to long-term memory with spaced repetition technique.
                 </p>
                 <div className="space-y-2 mb-4">
                   <div className="flex items-start gap-2">
                     <CheckCircle className="h-5 w-5 text-green-600 dark:text-green-500 mt-0.5" />
                     <p className="text-sm text-gray-700 dark:text-gray-300">
-                      <strong>AI destekli:</strong> Dokümanlarınızdan otomatik kart oluşturma
+                      <strong>AI-powered:</strong> Automatic card generation from your documents
                     </p>
                   </div>
                   <div className="flex items-start gap-2">
                     <CheckCircle className="h-5 w-5 text-green-600 dark:text-green-500 mt-0.5" />
                     <p className="text-sm text-gray-700 dark:text-gray-300">
-                      <strong>Manuel ekleme:</strong> Kendi kartlarınızı da oluşturabilirsiniz
+                      <strong>Manual creation:</strong> You can also create your own cards
                     </p>
                   </div>
                   <div className="flex items-start gap-2">
                     <CheckCircle className="h-5 w-5 text-green-600 dark:text-green-500 mt-0.5" />
                     <p className="text-sm text-gray-700 dark:text-gray-300">
-                      <strong>Alıştırma modu:</strong> Kartlarınızı çalışma oturumlarında gözden geçirin
+                      <strong>Practice mode:</strong> Review your cards in study sessions
                     </p>
                   </div>
                 </div>
                 <Link href="/dashboard/flashcards">
                   <Button className="bg-blue-600 hover:bg-blue-700 text-white">
-                    Bilgi Kartlarını Görüntüle
+                    View Flashcards
                     <ArrowRight className="ml-2 h-4 w-4" />
                   </Button>
                 </Link>
@@ -311,28 +311,28 @@ export default function HowToUsePage() {
               </div>
               <div className="flex-1">
                 <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
-                  🏆 Oyunlaştırma ve Serilər
+                  🏆 Gamification and Streaks
                 </h3>
                 <p className="text-gray-600 dark:text-[#92adc9] mb-4">
-                  Günlük çalışma serilerinizi koruyun ve lider tablosunda yükselın!
+                  Maintain your daily study streaks and climb the leaderboard!
                 </p>
                 <div className="space-y-2 mb-4">
                   <div className="flex items-start gap-2">
                     <CheckCircle className="h-5 w-5 text-green-600 dark:text-green-500 mt-0.5" />
                     <p className="text-sm text-gray-700 dark:text-gray-300">
-                      <strong>Günlük seriler:</strong> Her gün çalışarak serinizi koruyun
+                      <strong>Daily streaks:</strong> Study every day to maintain your streak
                     </p>
                   </div>
                   <div className="flex items-start gap-2">
                     <CheckCircle className="h-5 w-5 text-green-600 dark:text-green-500 mt-0.5" />
                     <p className="text-sm text-gray-700 dark:text-gray-300">
-                      <strong>Başarı rozetleri:</strong> Hedeflerinize ulaştıkça rozetler kazanın
+                      <strong>Achievement badges:</strong> Earn badges as you reach your goals
                     </p>
                   </div>
                   <div className="flex items-start gap-2">
                     <CheckCircle className="h-5 w-5 text-green-600 dark:text-green-500 mt-0.5" />
                     <p className="text-sm text-gray-700 dark:text-gray-300">
-                      <strong>Lider tablosu:</strong> Diğer öğrencilerle rekabet edin
+                      <strong>Leaderboard:</strong> Compete with other learners
                     </p>
                   </div>
                 </div>
@@ -345,7 +345,7 @@ export default function HowToUsePage() {
       {/* Best Practices */}
       <section className="mb-10">
         <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
-          En İyi Kullanım İpuçları
+          Best Practices
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="rounded-xl border-2 border-blue-200 dark:border-blue-500/30 bg-blue-50 dark:bg-blue-500/10 p-6">
@@ -353,11 +353,11 @@ export default function HowToUsePage() {
               <Target className="h-6 w-6 text-blue-600 dark:text-blue-500 mt-1" />
               <div>
                 <h3 className="font-semibold text-gray-900 dark:text-white mb-2">
-                  Düzenli Çalışma
+                  Consistent Study
                 </h3>
                 <p className="text-sm text-gray-700 dark:text-gray-300">
-                  Her gün en az 15-20 dakika çalışarak öğrenme seriliğinizi koruyun. 
-                  Kısa ama düzenli çalışma, uzun ama düzensiz çalışmadan daha etkilidir.
+                  Maintain your learning continuity by studying at least 15-20 minutes every day. 
+                  Short but regular study is more effective than long but irregular sessions.
                 </p>
               </div>
             </div>
@@ -368,11 +368,11 @@ export default function HowToUsePage() {
               <Zap className="h-6 w-6 text-blue-600 dark:text-blue-500 mt-1" />
               <div>
                 <h3 className="font-semibold text-gray-900 dark:text-white mb-2">
-                  Doğru Hız
+                  Right Speed
                 </h3>
                 <p className="text-sm text-gray-700 dark:text-gray-300">
-                  Hızlı okumada başlangıçta yavaş başlayıp kademeli olarak hızınızı artırın. 
-                  Anlamayı feda etmeden en yüksek hızı hedefleyin.
+                  Start slowly in speed reading and gradually increase your speed. 
+                  Aim for the highest speed without sacrificing comprehension.
                 </p>
               </div>
             </div>
@@ -383,11 +383,11 @@ export default function HowToUsePage() {
               <HelpCircle className="h-6 w-6 text-blue-600 dark:text-blue-500 mt-1" />
               <div>
                 <h3 className="font-semibold text-gray-900 dark:text-white mb-2">
-                  Aktif Tekrar
+                  Active Recall
                 </h3>
                 <p className="text-sm text-gray-700 dark:text-gray-300">
-                  Öğrendiklerinizi testler ve flashcard'larla düzenli olarak tekrar edin. 
-                  Spaced repetition hafızanızı güçlendirir.
+                  Regularly review what you've learned with quizzes and flashcards. 
+                  Spaced repetition strengthens your memory.
                 </p>
               </div>
             </div>
@@ -398,11 +398,11 @@ export default function HowToUsePage() {
               <BookOpen className="h-6 w-6 text-blue-600 dark:text-blue-500 mt-1" />
               <div>
                 <h3 className="font-semibold text-gray-900 dark:text-white mb-2">
-                  Organize Olun
+                  Stay Organized
                 </h3>
                 <p className="text-sm text-gray-700 dark:text-gray-300">
-                  Dokümanlarınızı konulara göre ayırın ve her konu için ayrı desteler oluşturun. 
-                  Bu, bilgilere daha kolay erişmenizi sağlar.
+                  Organize your documents by topic and create separate decks for each subject. 
+                  This makes it easier to access information.
                 </p>
               </div>
             </div>
@@ -413,49 +413,49 @@ export default function HowToUsePage() {
       {/* FAQ */}
       <section className="mb-10">
         <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
-          Sık Sorulan Sorular
+          Frequently Asked Questions
         </h2>
         <div className="space-y-4">
           <div className="rounded-xl border border-gray-200 dark:border-[#324d67] bg-white dark:bg-[#1a2633] p-6">
             <h3 className="font-semibold text-gray-900 dark:text-white mb-2">
-              RSVP (Hızlı Okuma) nedir ve nasıl çalışır?
+              What is RSVP (Speed Reading) and how does it work?
             </h3>
             <p className="text-sm text-gray-600 dark:text-[#92adc9]">
-              RSVP (Rapid Serial Visual Presentation), kelimeleri ekranda tek tek, hızlı bir şekilde 
-              göstererek okuma hızınızı artıran bir tekniktir. Gözleriniz sabit kalırken kelimeler 
-              sizin için hareket eder, bu da göz hareketini ortadan kaldırarak okuma hızınızı 2-3 kat artırır.
+              RSVP (Rapid Serial Visual Presentation) is a technique that increases your reading speed 
+              by displaying words one at a time rapidly on the screen. Your eyes stay fixed while the words 
+              move for you, eliminating eye movement and increasing your reading speed by 20x.
             </p>
           </div>
 
           <div className="rounded-xl border border-gray-200 dark:border-[#324d67] bg-white dark:bg-[#1a2633] p-6">
             <h3 className="font-semibold text-gray-900 dark:text-white mb-2">
-              AI nasıl test ve flashcard oluşturuyor?
+              How does AI create quizzes and flashcards?
             </h3>
             <p className="text-sm text-gray-600 dark:text-[#92adc9]">
-              Gemini AI, yüklediğiniz dokümanları analiz ederek içeriğin en önemli noktalarını belirler. 
-              Bu noktalardan anlamlı çoktan seçmeli sorular ve flashcard'lar oluşturur. AI, konunun 
-              anlaşılması için gereken anahtar kavramları otomatik olarak tespit eder.
+              AI analyzes your uploaded documents to identify the most important points in the content. 
+              It creates meaningful multiple-choice questions and flashcards from these points. The AI 
+              automatically detects key concepts needed to understand the subject.
             </p>
           </div>
 
           <div className="rounded-xl border border-gray-200 dark:border-[#324d67] bg-white dark:bg-[#1a2633] p-6">
             <h3 className="font-semibold text-gray-900 dark:text-white mb-2">
-              Hangi dosya formatlarını yükleyebilirim?
+              What file formats can I upload?
             </h3>
             <p className="text-sm text-gray-600 dark:text-[#92adc9]">
-              Şu anda PDF, Microsoft Word (.docx) ve düz metin (.txt) dosyalarını destekliyoruz. 
-              Yakında daha fazla format desteği eklenecek!
+              We currently support PDF, Microsoft Word (.docx), and plain text (.txt) files. 
+              More format support coming soon!
             </p>
           </div>
 
           <div className="rounded-xl border border-gray-200 dark:border-[#324d67] bg-white dark:bg-[#1a2633] p-6">
             <h3 className="font-semibold text-gray-900 dark:text-white mb-2">
-              Günlük serim nasıl korunur?
+              How do I maintain my daily streak?
             </h3>
             <p className="text-sm text-gray-600 dark:text-[#92adc9]">
-              Her gün en az bir aktivite (doküman okuma, test çözme veya flashcard çalışması) 
-              yaparak serinizi koruyabilirsiniz. Bir günü atlarsanız, seriniz sıfırlanır ve 
-              yeniden başlamanız gerekir.
+              You can maintain your streak by doing at least one activity each day (reading documents, 
+              taking quizzes, or studying flashcards). If you miss a day, your streak resets and 
+              you'll need to start over.
             </p>
           </div>
         </div>
@@ -463,14 +463,14 @@ export default function HowToUsePage() {
 
       {/* CTA */}
       <section className="rounded-xl bg-gradient-to-br from-blue-600 to-blue-700 dark:from-blue-500 dark:to-blue-600 p-8 text-white text-center">
-        <h2 className="text-2xl font-bold mb-3">Öğrenmeye Başlamaya Hazır mısınız?</h2>
+        <h2 className="text-2xl font-bold mb-3">Ready to Start Learning?</h2>
         <p className="text-white/90 mb-6 max-w-2xl mx-auto">
-          İlk dokümanınızı yükleyin ve yapay zeka destekli öğrenme deneyimini keşfedin!
+          Upload your first document and discover the AI-powered learning experience!
         </p>
         <Link href="/dashboard/documents">
           <Button className="bg-white text-blue-600 hover:bg-gray-100">
             <Upload className="mr-2 h-5 w-5" />
-            İlk Dokümanımı Yükle
+            Upload My First Document
           </Button>
         </Link>
       </section>
