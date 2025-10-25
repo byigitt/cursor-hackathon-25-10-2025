@@ -1,4 +1,6 @@
-# Deploy first, pray later.
+# Synapp
+
+A platform for studying and learning.
 
 ## Installation
 ```
