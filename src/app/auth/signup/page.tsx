@@ -43,36 +43,36 @@ export default function SignUpPage() {
     
     // Name validation
     if (!formData.name.trim()) {
-      newErrors.name = "İsim gereklidir";
+      newErrors.name = "Name is required";
     } else if (formData.name.trim().length < 2) {
-      newErrors.name = "İsim en az 2 karakter olmalıdır";
+      newErrors.name = "Name must be at least 2 characters";
     }
 
     // Email validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!formData.email) {
-      newErrors.email = "E-posta gereklidir";
+      newErrors.email = "Email is required";
     } else if (!emailRegex.test(formData.email)) {
-      newErrors.email = "Geçerli bir e-posta adresi giriniz";
+      newErrors.email = "Please enter a valid email address";
     }
 
     // Password validation
     if (!formData.password) {
-      newErrors.password = "Şifre gereklidir";
+      newErrors.password = "Password is required";
     } else if (formData.password.length < 8) {
-      newErrors.password = "Şifre en az 8 karakter olmalıdır";
+      newErrors.password = "Password must be at least 8 characters";
     }
 
     // Confirm password validation
     if (!formData.confirmPassword) {
-      newErrors.confirmPassword = "Şifre tekrarı gereklidir";
+      newErrors.confirmPassword = "Please confirm your password";
     } else if (formData.password !== formData.confirmPassword) {
-      newErrors.confirmPassword = "Şifreler eşleşmiyor";
+      newErrors.confirmPassword = "Passwords do not match";
     }
 
     // Terms validation
     if (!acceptTerms) {
-      newErrors.terms = "Kullanım koşullarını kabul etmelisiniz";
+      newErrors.terms = "You must accept the terms and conditions";
     }
 
     setErrors(newErrors);
@@ -134,23 +134,23 @@ export default function SignUpPage() {
       <Card className="border-gray-200 dark:border-gray-800">
         <CardHeader className="space-y-1 text-center">
           <CardTitle className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
-            Hesap Oluştur
+            Create Account
           </CardTitle>
           <CardDescription className="text-gray-600 dark:text-gray-400">
-            Hızlı okuma yolculuğunuza başlayın
+            Start your speed reading journey
           </CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="name" className="text-gray-700 dark:text-gray-300">
-                Ad Soyad
+                Full Name
               </Label>
               <Input
                 id="name"
                 name="name"
                 type="text"
-                placeholder="Adınız Soyadınız"
+                placeholder="Your Full Name"
                 value={formData.name}
                 onChange={handleInputChange}
                 required
@@ -164,13 +164,13 @@ export default function SignUpPage() {
 
             <div className="space-y-2">
               <Label htmlFor="email" className="text-gray-700 dark:text-gray-300">
-                E-posta
+                Email
               </Label>
               <Input
                 id="email"
                 name="email"
                 type="email"
-                placeholder="ornek@email.com"
+                placeholder="example@email.com"
                 value={formData.email}
                 onChange={handleInputChange}
                 required
@@ -184,7 +184,7 @@ export default function SignUpPage() {
             
             <div className="space-y-2">
               <Label htmlFor="password" className="text-gray-700 dark:text-gray-300">
-                Şifre
+                Password
               </Label>
               <Input
                 id="password"
@@ -204,7 +204,7 @@ export default function SignUpPage() {
 
             <div className="space-y-2">
               <Label htmlFor="confirmPassword" className="text-gray-700 dark:text-gray-300">
-                Şifre Tekrarı
+                Confirm Password
               </Label>
               <Input
                 id="confirmPassword"
@@ -243,14 +243,14 @@ export default function SignUpPage() {
                   htmlFor="terms" 
                   className="text-sm font-normal text-gray-600 dark:text-gray-400 cursor-pointer leading-relaxed"
                 >
+                  I have read and accept the{" "}
                   <Link href="/terms" className="text-[#007BFF] hover:underline">
-                    Kullanım Koşulları
+                    Terms of Service
                   </Link>
-                  {" "}ve{" "}
+                  {" "}and{" "}
                   <Link href="/privacy" className="text-[#007BFF] hover:underline">
-                    Gizlilik Politikası
+                    Privacy Policy
                   </Link>
-                  'nı okudum ve kabul ediyorum
                 </Label>
               </div>
               {errors.terms && (
@@ -263,17 +263,17 @@ export default function SignUpPage() {
               className="w-full bg-[#007BFF] hover:bg-[#007BFF]/90 text-white font-bold transition-transform duration-200 hover:scale-[1.02] h-12"
               disabled={isLoading || !acceptTerms}
             >
-              {isLoading ? "Hesap oluşturuluyor..." : "Kayıt Ol"}
+              {isLoading ? "Creating account..." : "Sign Up"}
             </Button>
           </form>
 
           <div className="mt-6 text-center text-sm text-gray-600 dark:text-gray-400">
-            Zaten hesabınız var mı?{" "}
+            Already have an account?{" "}
             <Link 
               href="/auth/signin"
               className="text-[#007BFF] hover:underline font-semibold"
             >
-              Giriş Yap
+              Sign In
             </Link>
           </div>
         </CardContent>

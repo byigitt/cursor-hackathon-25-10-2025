@@ -63,22 +63,22 @@ export default function SignInPage() {
       <Card className="border-gray-200 dark:border-gray-800">
         <CardHeader className="space-y-1 text-center">
           <CardTitle className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
-            Hoş Geldiniz
+            Welcome Back
           </CardTitle>
           <CardDescription className="text-gray-600 dark:text-gray-400">
-            Hesabınıza giriş yapın
+            Sign in to your account
           </CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="email" className="text-gray-700 dark:text-gray-300">
-                E-posta
+                Email
               </Label>
               <Input
                 id="email"
                 type="email"
-                placeholder="ornek@email.com"
+                placeholder="example@email.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
@@ -89,7 +89,7 @@ export default function SignInPage() {
             
             <div className="space-y-2">
               <Label htmlFor="password" className="text-gray-700 dark:text-gray-300">
-                Şifre
+                Password
               </Label>
               <Input
                 id="password"
@@ -115,14 +115,14 @@ export default function SignInPage() {
                   htmlFor="remember" 
                   className="text-sm font-normal text-gray-600 dark:text-gray-400 cursor-pointer"
                 >
-                  Beni hatırla
+                  Remember me
                 </Label>
               </div>
               <Link 
                 href="/auth/forgot-password"
                 className="text-sm text-[#007BFF] hover:underline"
               >
-                Şifremi unuttum
+                Forgot password?
               </Link>
             </div>
 
@@ -131,17 +131,17 @@ export default function SignInPage() {
               className="w-full bg-[#007BFF] hover:bg-[#007BFF]/90 text-white font-bold transition-transform duration-200 hover:scale-[1.02] h-12"
               disabled={isLoading}
             >
-              {isLoading ? "Giriş yapılıyor..." : "Giriş Yap"}
+              {isLoading ? "Signing in..." : "Sign In"}
             </Button>
           </form>
 
           <div className="mt-6 text-center text-sm text-gray-600 dark:text-gray-400">
-            Hesabınız yok mu?{" "}
+            Don't have an account?{" "}
             <Link 
               href="/auth/signup"
               className="text-[#007BFF] hover:underline font-semibold"
             >
-              Kayıt Ol
+              Sign Up
             </Link>
           </div>
         </CardContent>

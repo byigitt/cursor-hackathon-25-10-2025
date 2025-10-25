@@ -84,7 +84,7 @@ export default function DashboardSidebar({ user }: DashboardSidebarProps) {
             className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-white/5 text-gray-700 dark:text-white transition-colors"
           >
             <Info className="h-5 w-5" />
-            <p className="text-sm font-medium leading-normal">Nasıl Kullanılır?</p>
+            <p className="text-sm font-medium leading-normal">How to Use?</p>
           </Link>
         </div>
       </div>
