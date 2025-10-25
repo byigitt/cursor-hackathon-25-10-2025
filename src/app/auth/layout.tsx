@@ -32,25 +32,25 @@ export default function AuthLayout({
             <footer className="flex flex-col gap-6 px-5 py-10 text-center">
               <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-4">
                 <Link 
-                  href="#"
+                  href="/about"
                   className="text-gray-500 dark:text-gray-400 text-base font-normal leading-normal hover:text-[#007BFF] dark:hover:text-[#007BFF]"
                 >
                   Hakkında
                 </Link>
                 <Link 
-                  href="#"
+                  href="/contact"
                   className="text-gray-500 dark:text-gray-400 text-base font-normal leading-normal hover:text-[#007BFF] dark:hover:text-[#007BFF]"
                 >
                   İletişim
                 </Link>
                 <Link 
-                  href="#"
+                  href="/privacy"
                   className="text-gray-500 dark:text-gray-400 text-base font-normal leading-normal hover:text-[#007BFF] dark:hover:text-[#007BFF]"
                 >
                   Gizlilik Politikası
                 </Link>
                 <Link 
-                  href="#"
+                  href="/terms"
                   className="text-gray-500 dark:text-gray-400 text-base font-normal leading-normal hover:text-[#007BFF] dark:hover:text-[#007BFF]"
                 >
                   Kullanım Koşulları

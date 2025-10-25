@@ -15,9 +15,6 @@ export default defineConfig({
         'src/server/schemas/**/*.ts',
         'src/server/lib/gemini.ts',
       ],
-      exclude: [
-        'src/server/api/routers/post.ts', // Exclude demo router
-      ],
     },
     testTimeout: 30000, // 30 seconds for AI API calls
     server: {
