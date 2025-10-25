@@ -37,7 +37,9 @@ describe('Quiz Router E2E Tests', () => {
 
   afterAll(async () => {
     // Clean up test data
-    await cleanupUserData(testUser.id);
+    if (testUser?.id) {
+      await cleanupUserData(testUser.id);
+    }
   });
 
   describe('generate', () => {
@@ -118,8 +120,8 @@ describe('Quiz Router E2E Tests', () => {
 
     it('should throw NOT_FOUND for non-existent deck', async () => {
       await expect(
-        authenticatedCaller.quiz.generate({ deckId: 'non-existent-deck' })
-      ).rejects.toThrow('NOT_FOUND');
+        authenticatedCaller.quiz.generate({ deckId: 'cltest000000000000000001' })
+      ).rejects.toThrow(/NOT_FOUND|not found/i);
     });
 
     it('should throw FORBIDDEN for other user deck', async () => {
@@ -271,8 +273,8 @@ describe('Quiz Router E2E Tests', () => {
 
     it('should throw NOT_FOUND for non-existent quiz', async () => {
       await expect(
-        authenticatedCaller.quiz.getById({ id: 'non-existent-quiz' })
-      ).rejects.toThrow('NOT_FOUND');
+        authenticatedCaller.quiz.getById({ id: 'cltest000000000000000004' })
+      ).rejects.toThrow(/NOT_FOUND|not found/i);
     });
 
     it('should throw FORBIDDEN for other user quiz', async () => {

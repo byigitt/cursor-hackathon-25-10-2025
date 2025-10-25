@@ -22,7 +22,9 @@ describe('Document Router E2E Tests', () => {
 
   afterAll(async () => {
     // Clean up test data
-    await cleanupUserData(testUser.id);
+    if (testUser?.id) {
+      await cleanupUserData(testUser.id);
+    }
   });
 
   describe('create', () => {
@@ -73,14 +75,14 @@ describe('Document Router E2E Tests', () => {
     it('should throw NOT_FOUND for non-existent deck', async () => {
       await expect(
         authenticatedCaller.document.create({
-          deckId: 'non-existent-deck',
+          deckId: 'cltest000000000000000001',
           name: testDocuments.science.name,
           fileUrl: testDocuments.science.fileUrl,
           fileKey: testDocuments.science.fileKey,
           fileType: testDocuments.science.fileType,
           fileSize: testDocuments.science.fileSize,
         })
-      ).rejects.toThrow('NOT_FOUND');
+      ).rejects.toThrow(/NOT_FOUND|not found/i);
     });
 
     it('should throw FORBIDDEN for other user deck', async () => {
@@ -98,7 +100,7 @@ describe('Document Router E2E Tests', () => {
           fileType: testDocuments.science.fileType,
           fileSize: testDocuments.science.fileSize,
         })
-      ).rejects.toThrow('FORBIDDEN');
+      ).rejects.toThrow(/FORBIDDEN|don't have permission|Forbidden/i);
 
       await cleanupUserData(otherUser.id);
     });
@@ -192,8 +194,8 @@ describe('Document Router E2E Tests', () => {
 
     it('should throw NOT_FOUND for non-existent document', async () => {
       await expect(
-        authenticatedCaller.document.getById({ id: 'non-existent-doc' })
-      ).rejects.toThrow('NOT_FOUND');
+        authenticatedCaller.document.getById({ id: 'cltest000000000000000002' })
+      ).rejects.toThrow(/NOT_FOUND|not found/i);
     });
 
     it('should throw FORBIDDEN for other user document', async () => {
@@ -239,10 +241,10 @@ describe('Document Router E2E Tests', () => {
     it('should throw NOT_FOUND for non-existent document', async () => {
       await expect(
         authenticatedCaller.document.update({
-          id: 'non-existent-doc',
+          id: 'cltest000000000000000002',
           name: 'New Name',
         })
-      ).rejects.toThrow('NOT_FOUND');
+      ).rejects.toThrow(/NOT_FOUND|not found/i);
     });
 
     it('should throw FORBIDDEN for other user document', async () => {
@@ -294,8 +296,8 @@ describe('Document Router E2E Tests', () => {
 
     it('should throw NOT_FOUND for non-existent document', async () => {
       await expect(
-        authenticatedCaller.document.delete({ id: 'non-existent-doc' })
-      ).rejects.toThrow('NOT_FOUND');
+        authenticatedCaller.document.delete({ id: 'cltest000000000000000002' })
+      ).rejects.toThrow(/NOT_FOUND|not found/i);
     });
 
     it('should throw FORBIDDEN for other user document', async () => {

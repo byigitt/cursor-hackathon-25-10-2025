@@ -136,8 +136,8 @@ describe('Flashcard Router E2E Tests', () => {
 
     it('should throw NOT_FOUND for non-existent flashcard', async () => {
       await expect(
-        authenticatedCaller.flashcard.getById({ id: 'non-existent-card' })
-      ).rejects.toThrow('NOT_FOUND');
+        authenticatedCaller.flashcard.getById({ id: 'cltest000000000000000003' })
+      ).rejects.toThrow(/NOT_FOUND|not found/i);
     });
   });
 

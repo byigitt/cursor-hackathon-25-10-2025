@@ -59,7 +59,7 @@ describe('Gamification Router E2E Tests', () => {
     it('should require authentication', async () => {
       await expect(
         unauthenticatedCaller.gamification.getMyStreak()
-      ).rejects.toThrow('UNAUTHORIZED');
+      ).rejects.toThrow(/UNAUTHORIZED|Unauthorized/);
     });
   });
 

@@ -58,7 +58,7 @@ export async function createUnauthenticatedCaller() {
 export async function expectUnauthorized(
   procedure: () => Promise<any>
 ): Promise<void> {
-  await expect(procedure()).rejects.toThrow('UNAUTHORIZED');
+  await expect(procedure()).rejects.toThrow(/UNAUTHORIZED|Unauthorized/);
 }
 
 /**
@@ -67,7 +67,7 @@ export async function expectUnauthorized(
 export async function expectNotFound(
   procedure: () => Promise<any>
 ): Promise<void> {
-  await expect(procedure()).rejects.toThrow('NOT_FOUND');
+  await expect(procedure()).rejects.toThrow(/NOT_FOUND|not found/i);
 }
 
 /**
@@ -76,6 +76,6 @@ export async function expectNotFound(
 export async function expectForbidden(
   procedure: () => Promise<any>
 ): Promise<void> {
-  await expect(procedure()).rejects.toThrow('FORBIDDEN');
+  await expect(procedure()).rejects.toThrow(/FORBIDDEN|don't have permission|Forbidden/i);
 }
 

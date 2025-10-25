@@ -35,8 +35,8 @@ export const testDocuments = {
       - Endoplasmic Reticulum: Protein and lipid processing
       - Golgi Apparatus: Packaging and shipping proteins
     `,
-    fileUrl: 'https://uploadthing.com/test/science.pdf',
-    fileKey: 'test-science-key',
+    fileUrl: 'https://t7o0sn1kvd.ufs.sh/f/3jfmu3TceKjDgGb6nVZUIQhX6YplGvMFZc2jAn3BL7HJ0uCb',
+    fileKey: '3jfmu3TceKjDgGb6nVZUIQhX6YplGvMFZc2jAn3BL7HJ0uCb',
     fileType: 'pdf' as const,
     fileSize: 1024 * 50, // 50KB
   },
@@ -79,8 +79,8 @@ export const testDocuments = {
       - Historical perspective and bias
       - Continuity and change over time
     `,
-    fileUrl: 'https://uploadthing.com/test/history.pdf',
-    fileKey: 'test-history-key',
+    fileUrl: 'https://t7o0sn1kvd.ufs.sh/f/3jfmu3TceKjDgGb6nVZUIQhX6YplGvMFZc2jAn3BL7HJ0uCb',
+    fileKey: '3jfmu3TceKjDgGb6nVZUIQhX6YplGvMFZc2jAn3BL7HJ0uCb',
     fileType: 'pdf' as const,
     fileSize: 1024 * 45, // 45KB
   },
@@ -120,8 +120,8 @@ export const testDocuments = {
       - Circle area: A = πr²
       - Circle circumference: C = 2πr
     `,
-    fileUrl: 'https://uploadthing.com/test/math.pdf',
-    fileKey: 'test-math-key',
+    fileUrl: 'https://t7o0sn1kvd.ufs.sh/f/3jfmu3TceKjDxD4ZO0A1oyvcI3glJn8YNL0MXdqbRjr4pauQ',
+    fileKey: '3jfmu3TceKjDxD4ZO0A1oyvcI3glJn8YNL0MXdqbRjr4pauQ',
     fileType: 'pdf' as const,
     fileSize: 1024 * 40, // 40KB
   },

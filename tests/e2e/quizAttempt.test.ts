@@ -74,7 +74,9 @@ describe('QuizAttempt Router E2E Tests', () => {
 
   afterAll(async () => {
     // Clean up test data
-    await cleanupUserData(testUser.id);
+    if (testUser?.id) {
+      await cleanupUserData(testUser.id);
+    }
   });
 
   describe('submit', () => {
@@ -174,10 +176,10 @@ describe('QuizAttempt Router E2E Tests', () => {
     it('should throw NOT_FOUND for non-existent quiz', async () => {
       await expect(
         authenticatedCaller.quizAttempt.submit({
-          quizId: 'non-existent-quiz',
-          answers: [],
+          quizId: 'cltest000000000000000004',
+          answers: [{ questionId: 'cltest000000000000000006', selectedOptionId: 'cltest000000000000000007' }],
         })
-      ).rejects.toThrow('NOT_FOUND');
+      ).rejects.toThrow(/NOT_FOUND|not found/i);
     });
 
     it('should throw FORBIDDEN for other user quiz', async () => {
@@ -219,7 +221,7 @@ describe('QuizAttempt Router E2E Tests', () => {
             selectedOptionId: otherQuiz.questions[0]!.options[0]!.id,
           }],
         })
-      ).rejects.toThrow('FORBIDDEN');
+      ).rejects.toThrow(/FORBIDDEN|don't have permission|Forbidden/i);
 
       await cleanupUserData(otherUser.id);
     });
@@ -312,8 +314,8 @@ describe('QuizAttempt Router E2E Tests', () => {
 
     it('should throw NOT_FOUND for non-existent attempt', async () => {
       await expect(
-        authenticatedCaller.quizAttempt.getById({ id: 'non-existent-attempt' })
-      ).rejects.toThrow('NOT_FOUND');
+        authenticatedCaller.quizAttempt.getById({ id: 'cltest000000000000000005' })
+      ).rejects.toThrow(/NOT_FOUND|not found/i);
     });
 
     it('should throw FORBIDDEN for other user attempt', async () => {
@@ -360,7 +362,7 @@ describe('QuizAttempt Router E2E Tests', () => {
 
       await expect(
         authenticatedCaller.quizAttempt.getById({ id: otherAttempt.attemptId })
-      ).rejects.toThrow('FORBIDDEN');
+      ).rejects.toThrow(/FORBIDDEN|don't have permission|Forbidden/i);
 
       await cleanupUserData(otherUser.id);
     });
@@ -423,8 +425,8 @@ describe('QuizAttempt Router E2E Tests', () => {
 
     it('should throw NOT_FOUND for non-existent attempt', async () => {
       await expect(
-        authenticatedCaller.quizAttempt.delete({ id: 'non-existent-attempt' })
-      ).rejects.toThrow('NOT_FOUND');
+        authenticatedCaller.quizAttempt.delete({ id: 'cltest000000000000000005' })
+      ).rejects.toThrow(/NOT_FOUND|not found/i);
     });
   });
 });

@@ -41,6 +41,9 @@ import {
   getQuizAttemptStatsSchema,
 } from '~/server/schemas/quiz';
 
+// Valid CUID for testing (25 characters, starts with 'c')
+const TEST_CUID = 'ckx5w8z1a0000qzrm5p5k5p5k';
+
 describe('Schema Validation Tests', () => {
   describe('Deck Schemas', () => {
     describe('createDeckSchema', () => {
@@ -71,7 +74,7 @@ describe('Schema Validation Tests', () => {
     describe('updateDeckSchema', () => {
       it('should validate valid update', () => {
         const result = updateDeckSchema.safeParse({
-          id: 'cuid123',
+          id: TEST_CUID,
           name: 'Updated Deck Name',
         });
         expect(result.success).toBe(true);
@@ -90,7 +93,7 @@ describe('Schema Validation Tests', () => {
     describe('addDocumentSchema', () => {
       it('should validate valid document', () => {
         const result = addDocumentSchema.safeParse({
-          deckId: 'cuid123',
+          deckId: TEST_CUID,
           name: 'Study Guide.pdf',
           fileUrl: 'https://uploadthing.com/file.pdf',
           fileKey: 'file-key-123',
@@ -102,7 +105,7 @@ describe('Schema Validation Tests', () => {
 
       it('should reject invalid file type', () => {
         const result = addDocumentSchema.safeParse({
-          deckId: 'cuid123',
+          deckId: TEST_CUID,
           name: 'Study Guide.exe',
           fileUrl: 'https://uploadthing.com/file.exe',
           fileKey: 'file-key-123',
@@ -115,7 +118,7 @@ describe('Schema Validation Tests', () => {
 
       it('should reject invalid URL', () => {
         const result = addDocumentSchema.safeParse({
-          deckId: 'cuid123',
+          deckId: TEST_CUID,
           name: 'Study Guide.pdf',
           fileUrl: 'not-a-url',
           fileKey: 'file-key-123',
@@ -128,7 +131,7 @@ describe('Schema Validation Tests', () => {
 
       it('should reject negative file size', () => {
         const result = addDocumentSchema.safeParse({
-          deckId: 'cuid123',
+          deckId: TEST_CUID,
           name: 'Study Guide.pdf',
           fileUrl: 'https://uploadthing.com/file.pdf',
           fileKey: 'file-key-123',
@@ -143,7 +146,7 @@ describe('Schema Validation Tests', () => {
     describe('updateRsvpSpeedSchema', () => {
       it('should validate valid speed', () => {
         const result = updateRsvpSpeedSchema.safeParse({
-          deckId: 'cuid123',
+          deckId: TEST_CUID,
           rsvpSpeedWPM: 300,
         });
         expect(result.success).toBe(true);
@@ -151,7 +154,7 @@ describe('Schema Validation Tests', () => {
 
       it('should reject speed too slow', () => {
         const result = updateRsvpSpeedSchema.safeParse({
-          deckId: 'cuid123',
+          deckId: TEST_CUID,
           rsvpSpeedWPM: 50,
         });
         expect(result.success).toBe(false);
@@ -160,7 +163,7 @@ describe('Schema Validation Tests', () => {
 
       it('should reject speed too fast', () => {
         const result = updateRsvpSpeedSchema.safeParse({
-          deckId: 'cuid123',
+          deckId: TEST_CUID,
           rsvpSpeedWPM: 1500,
         });
         expect(result.success).toBe(false);
@@ -173,7 +176,7 @@ describe('Schema Validation Tests', () => {
     describe('createFlashcardSchema', () => {
       it('should validate valid flashcard', () => {
         const result = createFlashcardSchema.safeParse({
-          deckId: 'cuid123',
+          deckId: TEST_CUID,
           frontText: 'What is the capital of France?',
           backText: 'Paris',
         });
@@ -182,7 +185,7 @@ describe('Schema Validation Tests', () => {
 
       it('should reject empty front text', () => {
         const result = createFlashcardSchema.safeParse({
-          deckId: 'cuid123',
+          deckId: TEST_CUID,
           frontText: '',
           backText: 'Answer',
         });
@@ -192,7 +195,7 @@ describe('Schema Validation Tests', () => {
 
       it('should reject text that is too long', () => {
         const result = createFlashcardSchema.safeParse({
-          deckId: 'cuid123',
+          deckId: TEST_CUID,
           frontText: 'a'.repeat(501),
           backText: 'Answer',
         });
@@ -204,7 +207,7 @@ describe('Schema Validation Tests', () => {
     describe('updateFlashcardSchema', () => {
       it('should allow partial updates', () => {
         const result = updateFlashcardSchema.safeParse({
-          id: 'cuid123',
+          id: TEST_CUID,
           frontText: 'Updated front',
         });
         expect(result.success).toBe(true);
@@ -212,7 +215,7 @@ describe('Schema Validation Tests', () => {
 
       it('should allow updating only back text', () => {
         const result = updateFlashcardSchema.safeParse({
-          id: 'cuid123',
+          id: TEST_CUID,
           backText: 'Updated back',
         });
         expect(result.success).toBe(true);
@@ -224,7 +227,7 @@ describe('Schema Validation Tests', () => {
     describe('generateQuizSchema', () => {
       it('should validate valid quiz generation', () => {
         const result = generateQuizSchema.safeParse({
-          deckId: 'cuid123',
+          deckId: TEST_CUID,
           questionCount: 10,
         });
         expect(result.success).toBe(true);
@@ -232,7 +235,7 @@ describe('Schema Validation Tests', () => {
 
       it('should use default question count', () => {
         const result = generateQuizSchema.safeParse({
-          deckId: 'cuid123',
+          deckId: TEST_CUID,
         });
         expect(result.success).toBe(true);
         if (result.success) {
@@ -242,7 +245,7 @@ describe('Schema Validation Tests', () => {
 
       it('should reject too few questions', () => {
         const result = generateQuizSchema.safeParse({
-          deckId: 'cuid123',
+          deckId: TEST_CUID,
           questionCount: 3,
         });
         expect(result.success).toBe(false);
@@ -251,7 +254,7 @@ describe('Schema Validation Tests', () => {
 
       it('should reject too many questions', () => {
         const result = generateQuizSchema.safeParse({
-          deckId: 'cuid123',
+          deckId: TEST_CUID,
           questionCount: 35,
         });
         expect(result.success).toBe(false);
@@ -262,15 +265,15 @@ describe('Schema Validation Tests', () => {
     describe('submitQuizAttemptSchema', () => {
       it('should validate valid submission', () => {
         const result = submitQuizAttemptSchema.safeParse({
-          quizId: 'cuid123',
+          quizId: TEST_CUID,
           answers: [
             {
-              questionId: 'question1',
-              selectedOptionId: 'option1',
+              questionId: TEST_CUID,
+              selectedOptionId: TEST_CUID,
             },
             {
-              questionId: 'question2',
-              selectedOptionId: 'option2',
+              questionId: TEST_CUID,
+              selectedOptionId: TEST_CUID,
             },
           ],
         });
@@ -279,7 +282,7 @@ describe('Schema Validation Tests', () => {
 
       it('should require at least one answer', () => {
         const result = submitQuizAttemptSchema.safeParse({
-          quizId: 'cuid123',
+          quizId: TEST_CUID,
           answers: [],
         });
         expect(result.success).toBe(false);
@@ -288,7 +291,7 @@ describe('Schema Validation Tests', () => {
 
       it('should validate answer structure', () => {
         const result = submitQuizAttemptSchema.safeParse({
-          quizId: 'cuid123',
+          quizId: TEST_CUID,
           answers: [
             {
               questionId: 'invalid!',
@@ -304,7 +307,7 @@ describe('Schema Validation Tests', () => {
     describe('updateQuestionSchema', () => {
       it('should validate question update', () => {
         const result = updateQuestionSchema.safeParse({
-          id: 'cuid123',
+          id: TEST_CUID,
           questionText: 'Updated question text?',
         });
         expect(result.success).toBe(true);
@@ -312,7 +315,7 @@ describe('Schema Validation Tests', () => {
 
       it('should reject empty question text', () => {
         const result = updateQuestionSchema.safeParse({
-          id: 'cuid123',
+          id: TEST_CUID,
           questionText: '',
         });
         expect(result.success).toBe(false);
@@ -321,7 +324,7 @@ describe('Schema Validation Tests', () => {
 
       it('should reject question text that is too long', () => {
         const result = updateQuestionSchema.safeParse({
-          id: 'cuid123',
+          id: TEST_CUID,
           questionText: 'a'.repeat(501),
         });
         expect(result.success).toBe(false);
@@ -332,7 +335,7 @@ describe('Schema Validation Tests', () => {
     describe('updateOptionSchema', () => {
       it('should allow partial option updates', () => {
         const result = updateOptionSchema.safeParse({
-          id: 'cuid123',
+          id: TEST_CUID,
           optionText: 'Updated option',
         });
         expect(result.success).toBe(true);
@@ -340,7 +343,7 @@ describe('Schema Validation Tests', () => {
 
       it('should allow updating only correctness', () => {
         const result = updateOptionSchema.safeParse({
-          id: 'cuid123',
+          id: TEST_CUID,
           isCorrect: true,
         });
         expect(result.success).toBe(true);
@@ -348,7 +351,7 @@ describe('Schema Validation Tests', () => {
 
       it('should allow updating both fields', () => {
         const result = updateOptionSchema.safeParse({
-          id: 'cuid123',
+          id: TEST_CUID,
           optionText: 'New text',
           isCorrect: false,
         });
@@ -392,7 +395,7 @@ describe('Schema Validation Tests', () => {
     describe('updateStreakSchema', () => {
       it('should validate user ID', () => {
         const result = updateStreakSchema.safeParse({
-          userId: 'cuid123',
+          userId: TEST_CUID,
         });
         expect(result.success).toBe(true);
       });

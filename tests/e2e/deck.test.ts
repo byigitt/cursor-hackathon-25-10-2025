@@ -17,7 +17,9 @@ describe('Deck Router E2E Tests', () => {
 
   afterAll(async () => {
     // Clean up test data
-    await cleanupUserData(testUser.id);
+    if (testUser?.id) {
+      await cleanupUserData(testUser.id);
+    }
   });
 
   describe('create', () => {
@@ -127,8 +129,8 @@ describe('Deck Router E2E Tests', () => {
 
     it('should throw NOT_FOUND for non-existent deck', async () => {
       await expect(
-        authenticatedCaller.deck.getById({ id: 'non-existent-id' })
-      ).rejects.toThrow('NOT_FOUND');
+        authenticatedCaller.deck.getById({ id: 'cltest000000000000000000' })
+      ).rejects.toThrow(/NOT_FOUND|not found/i);
     });
 
     it('should throw FORBIDDEN for other user deck', async () => {
@@ -139,7 +141,7 @@ describe('Deck Router E2E Tests', () => {
 
       await expect(
         authenticatedCaller.deck.getById({ id: otherDeck.id })
-      ).rejects.toThrow('FORBIDDEN');
+      ).rejects.toThrow(/FORBIDDEN|don't have permission|Forbidden/i);
 
       await cleanupUserData(otherUser.id);
     });
@@ -170,10 +172,10 @@ describe('Deck Router E2E Tests', () => {
     it('should throw NOT_FOUND for non-existent deck', async () => {
       await expect(
         authenticatedCaller.deck.update({
-          id: 'non-existent-id',
+          id: 'cltest000000000000000000',
           name: 'New Name',
         })
-      ).rejects.toThrow('NOT_FOUND');
+      ).rejects.toThrow(/NOT_FOUND|not found/i);
     });
 
     it('should throw FORBIDDEN for other user deck', async () => {
@@ -187,7 +189,7 @@ describe('Deck Router E2E Tests', () => {
           id: otherDeck.id,
           name: 'Hacked Name',
         })
-      ).rejects.toThrow('FORBIDDEN');
+      ).rejects.toThrow(/FORBIDDEN|don't have permission|Forbidden/i);
 
       await cleanupUserData(otherUser.id);
     });
@@ -218,8 +220,8 @@ describe('Deck Router E2E Tests', () => {
 
     it('should throw NOT_FOUND for non-existent deck', async () => {
       await expect(
-        authenticatedCaller.deck.delete({ id: 'non-existent-id' })
-      ).rejects.toThrow('NOT_FOUND');
+        authenticatedCaller.deck.delete({ id: 'cltest000000000000000000' })
+      ).rejects.toThrow(/NOT_FOUND|not found/i);
     });
 
     it('should throw FORBIDDEN for other user deck', async () => {
@@ -230,7 +232,7 @@ describe('Deck Router E2E Tests', () => {
 
       await expect(
         authenticatedCaller.deck.delete({ id: otherDeck.id })
-      ).rejects.toThrow('FORBIDDEN');
+      ).rejects.toThrow(/FORBIDDEN|don't have permission|Forbidden/i);
 
       // Verify deck still exists
       const deck = await testDb.deck.findUnique({

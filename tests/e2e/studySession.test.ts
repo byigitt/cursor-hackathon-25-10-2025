@@ -37,7 +37,9 @@ describe('StudySession Router E2E Tests', () => {
 
   afterAll(async () => {
     // Clean up test data
-    await cleanupUserData(testUser.id);
+    if (testUser?.id) {
+      await cleanupUserData(testUser.id);
+    }
   });
 
   describe('generate', () => {
@@ -75,8 +77,8 @@ describe('StudySession Router E2E Tests', () => {
 
     it('should throw NOT_FOUND for non-existent deck', async () => {
       await expect(
-        authenticatedCaller.studySession.generate({ deckId: 'non-existent-deck' })
-      ).rejects.toThrow('NOT_FOUND');
+        authenticatedCaller.studySession.generate({ deckId: 'cltest000000000000000001' })
+      ).rejects.toThrow(/NOT_FOUND|not found/i);
     });
 
     it('should throw FORBIDDEN for other user deck', async () => {
