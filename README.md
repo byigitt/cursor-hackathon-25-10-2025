@@ -14,7 +14,7 @@
   [![Tailwind CSS](https://img.shields.io/badge/Tailwind-4.0-38B2AC?style=flat&logo=tailwind-css)](https://tailwindcss.com/)
   [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
-  [Demo](https://synapp.example.com) · [Documentation](docs/) · [Report Bug](https://github.com/yourusername/synapp/issues) · [Request Feature](https://github.com/yourusername/synapp/issues)
+  [Demo](https://synapp.example.com) · [Documentation](docs/) · [Report Bug](https://github.com/byigitt/synapp/issues) · [Request Feature](https://github.com/byigitt/synapp/issues)
 </div>
 
 ---
@@ -233,7 +233,7 @@ Before you begin, ensure you have the following installed:
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/synapp.git
+git clone https://github.com/byigitt/synapp.git
 cd synapp
 
 # Install dependencies
@@ -264,7 +264,7 @@ Open [http://localhost:3000](http://localhost:3000) to see the application.
 #### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/yourusername/synapp.git
+git clone https://github.com/byigitt/synapp.git
 cd synapp
 ```
 
@@ -1049,7 +1049,7 @@ Thank you to all the amazing people who have contributed to this project! 🎉
 ### Project Links
 - **Website**: [synapp.example.com](https://synapp.example.com)
 - **Documentation**: [docs.synapp.example.com](https://docs.synapp.example.com)
-- **GitHub**: [github.com/yourusername/synapp](https://github.com/yourusername/synapp)
+- **GitHub**: [github.com/byigitt/synapp](https://github.com/byigitt/synapp)
 
 ### Social Media
 - **Twitter**: [@synapp_learn](https://twitter.com/synapp_learn)
@@ -1058,8 +1058,8 @@ Thank you to all the amazing people who have contributed to this project! 🎉
 
 ### Support
 - **Email**: support@synapp.com
-- **Issues**: [GitHub Issues](https://github.com/yourusername/synapp/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/yourusername/synapp/discussions)
+- **Issues**: [GitHub Issues](https://github.com/byigitt/synapp/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/byigitt/synapp/discussions)
 
 ---
 
@@ -1067,14 +1067,14 @@ Thank you to all the amazing people who have contributed to this project! 🎉
 
 <div align="center">
   
-  ![GitHub stars](https://img.shields.io/github/stars/yourusername/synapp?style=social)
-  ![GitHub forks](https://img.shields.io/github/forks/yourusername/synapp?style=social)
-  ![GitHub watchers](https://img.shields.io/github/watchers/yourusername/synapp?style=social)
+  ![GitHub stars](https://img.shields.io/github/stars/byigitt/synapp?style=social)
+  ![GitHub forks](https://img.shields.io/github/forks/byigitt/synapp?style=social)
+  ![GitHub watchers](https://img.shields.io/github/watchers/byigitt/synapp?style=social)
   
-  ![GitHub commit activity](https://img.shields.io/github/commit-activity/m/yourusername/synapp)
-  ![GitHub last commit](https://img.shields.io/github/last-commit/yourusername/synapp)
-  ![GitHub issues](https://img.shields.io/github/issues/yourusername/synapp)
-  ![GitHub pull requests](https://img.shields.io/github/issues-pr/yourusername/synapp)
+  ![GitHub commit activity](https://img.shields.io/github/commit-activity/m/byigitt/synapp)
+  ![GitHub last commit](https://img.shields.io/github/last-commit/byigitt/synapp)
+  ![GitHub issues](https://img.shields.io/github/issues/byigitt/synapp)
+  ![GitHub pull requests](https://img.shields.io/github/issues-pr/byigitt/synapp)
 
 </div>
 
