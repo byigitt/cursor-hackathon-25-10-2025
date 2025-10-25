@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Search, Pencil, Trash2 } from "lucide-react";
+import { Search, Pencil, Trash2, Sparkles } from "lucide-react";
 import { api } from "~/trpc/react";
 import { toast } from "sonner";
 import { Button } from "~/components/ui/button";
@@ -36,9 +36,11 @@ export default function FlashcardsPage() {
   const [activeDeckId, setActiveDeckId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
+  const [isGenerateDialogOpen, setIsGenerateDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [editingCard, setEditingCard] = useState<Flashcard | null>(null);
   const [formData, setFormData] = useState({ frontText: "", backText: "" });
+  const [cardCount, setCardCount] = useState(10);
 
   // Fetch all decks
   const { data: decks, isLoading: decksLoading } = api.deck.getAll.useQuery();
@@ -48,6 +50,10 @@ export default function FlashcardsPage() {
     { deckId: activeDeckId! },
     { enabled: !!activeDeckId }
   );
+
+  // Get active deck info
+  const activeDeck = decks?.find((deck) => deck.id === activeDeckId);
+  const hasDocuments = (activeDeck?._count?.documents ?? 0) > 0;
 
   // Create flashcard mutation
   const createFlashcard = api.flashcard.create.useMutation({
@@ -84,6 +90,19 @@ export default function FlashcardsPage() {
     },
     onError: (error) => {
       toast.error(error.message || "Failed to delete flashcard");
+    },
+  });
+
+  // Generate flashcards mutation
+  const generateFlashcards = api.flashcard.generate.useMutation({
+    onSuccess: (flashcards) => {
+      void utils.flashcard.getByDeckId.invalidate();
+      setIsGenerateDialogOpen(false);
+      setCardCount(10);
+      toast.success(`Successfully generated ${flashcards.length} flashcards!`);
+    },
+    onError: (error) => {
+      toast.error(error.message || "Failed to generate flashcards");
     },
   });
 
@@ -138,6 +157,25 @@ export default function FlashcardsPage() {
     alert("Practice mode coming soon!");
   };
 
+  const handleGenerate = () => {
+    if (!activeDeckId) {
+      toast.error("Please select a deck first");
+      return;
+    }
+    if (!hasDocuments) {
+      toast.error("This deck has no documents. Please upload documents first.");
+      return;
+    }
+    if (cardCount < 5 || cardCount > 50) {
+      toast.error("Card count must be between 5 and 50");
+      return;
+    }
+    generateFlashcards.mutate({
+      deckId: activeDeckId,
+      cardCount,
+    });
+  };
+
   return (
     <>
       <div className="flex flex-wrap justify-between gap-3 mb-6">
@@ -151,8 +189,25 @@ export default function FlashcardsPage() {
         </div>
         <div className="flex flex-wrap gap-3 items-start">
           <Button 
+            onClick={() => setIsGenerateDialogOpen(true)}
+            className="bg-blue-600 hover:bg-blue-700 text-white gap-2"
+            disabled={!activeDeckId || !hasDocuments || generateFlashcards.isPending}
+          >
+            {generateFlashcards.isPending ? (
+              <>
+                <Sparkles className="h-4 w-4 animate-pulse" />
+                Generating...
+              </>
+            ) : (
+              <>
+                <Sparkles className="h-4 w-4" />
+                Generate Flashcards
+              </>
+            )}
+          </Button>
+          <Button 
             onClick={() => setIsCreateDialogOpen(true)}
-            className="bg-blue-600 hover:bg-blue-700 text-white"
+            variant="outline"
             disabled={!activeDeckId || createFlashcard.isPending}
           >
             + Add New Card
@@ -237,15 +292,24 @@ export default function FlashcardsPage() {
           <p className="text-base text-gray-500 dark:text-[#92adc9] mb-4">
             {searchQuery 
               ? "Try adjusting your search query" 
-              : "Create your first flashcard to get started"}
+              : "Generate AI-powered flashcards or create manually"}
           </p>
           {!searchQuery && (
-            <Button 
-              onClick={() => setIsCreateDialogOpen(true)}
-              className="bg-blue-600 hover:bg-blue-700 text-white"
-            >
-              + Create Flashcard
-            </Button>
+            <div className="flex gap-3">
+              <Button 
+                onClick={() => setIsGenerateDialogOpen(true)}
+                className="bg-blue-600 hover:bg-blue-700 text-white gap-2"
+              >
+                <Sparkles className="h-4 w-4" />
+                Generate Flashcards
+              </Button>
+              <Button 
+                onClick={() => setIsCreateDialogOpen(true)}
+                variant="outline"
+              >
+                + Create Manually
+              </Button>
+            </div>
           )}
         </div>
       )}
@@ -407,6 +471,78 @@ export default function FlashcardsPage() {
               disabled={updateFlashcard.isPending}
             >
               {updateFlashcard.isPending ? "Updating..." : "Update"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Generate Dialog */}
+      <Dialog open={isGenerateDialogOpen} onOpenChange={setIsGenerateDialogOpen}>
+        <DialogContent className="bg-white dark:bg-[#1a2633] border-gray-200 dark:border-[#324d67]">
+          <DialogHeader>
+            <DialogTitle className="text-gray-900 dark:text-white flex items-center gap-2">
+              <Sparkles className="h-5 w-5 text-blue-600" />
+              Generate AI Flashcards
+            </DialogTitle>
+            <DialogDescription className="text-gray-500 dark:text-[#92adc9]">
+              Generate flashcards from your deck's documents using AI. Choose how many cards you want to create.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            {!hasDocuments && (
+              <div className="p-4 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg">
+                <p className="text-sm text-yellow-800 dark:text-yellow-200">
+                  This deck has no documents. Please upload documents to the deck first before generating flashcards.
+                </p>
+              </div>
+            )}
+            <div className="grid gap-2">
+              <Label htmlFor="cardCount" className="text-gray-900 dark:text-white">
+                Number of Flashcards (5-50)
+              </Label>
+              <Input
+                id="cardCount"
+                type="number"
+                min={5}
+                max={50}
+                value={cardCount}
+                onChange={(e) => setCardCount(Number(e.target.value))}
+                className="bg-white dark:bg-[#233648] border-gray-200 dark:border-[#324d67] text-gray-900 dark:text-white"
+                disabled={!hasDocuments}
+              />
+              <p className="text-sm text-gray-500 dark:text-[#92adc9]">
+                AI will generate {cardCount} flashcards based on the content from your documents.
+              </p>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => {
+                setIsGenerateDialogOpen(false);
+                setCardCount(10);
+              }}
+              className="border-gray-200 dark:border-[#324d67]"
+              disabled={generateFlashcards.isPending}
+            >
+              Cancel
+            </Button>
+            <Button 
+              onClick={handleGenerate} 
+              className="bg-blue-600 hover:bg-blue-700 text-white gap-2"
+              disabled={!hasDocuments || generateFlashcards.isPending}
+            >
+              {generateFlashcards.isPending ? (
+                <>
+                  <Sparkles className="h-4 w-4 animate-pulse" />
+                  Generating...
+                </>
+              ) : (
+                <>
+                  <Sparkles className="h-4 w-4" />
+                  Generate
+                </>
+              )}
             </Button>
           </DialogFooter>
         </DialogContent>

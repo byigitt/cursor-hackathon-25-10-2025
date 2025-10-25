@@ -4,14 +4,85 @@ import {
   protectedProcedure,
 } from "~/server/api/trpc";
 import {
+  generateFlashcardsSchema,
   createFlashcardSchema,
   updateFlashcardSchema,
   getFlashcardsByDeckIdSchema,
   getFlashcardByIdSchema,
   deleteFlashcardSchema,
 } from "~/server/schemas/flashcard";
+import { generateFlashcards } from "~/server/lib/gemini";
 
 export const flashcardRouter = createTRPCRouter({
+  // CREATE: Generate AI-powered flashcards for a deck
+  generate: protectedProcedure
+    .input(generateFlashcardsSchema)
+    .mutation(async ({ ctx, input }) => {
+      // Verify deck ownership and fetch documents
+      const deck = await ctx.db.deck.findUnique({
+        where: {
+          id: input.deckId,
+        },
+        include: {
+          documents: {
+            select: {
+              name: true,
+              fileUrl: true,
+            },
+          },
+        },
+      });
+
+      if (!deck) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Deck not found",
+        });
+      }
+
+      if (deck.userId !== ctx.session.user.id) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "You don't have permission to generate flashcards for this deck",
+        });
+      }
+
+      // Check if deck has documents
+      if (deck.documents.length === 0) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Cannot generate flashcards: deck has no documents",
+        });
+      }
+
+      // Generate flashcards using Gemini AI with native file processing
+      let flashcardsData;
+      try {
+        flashcardsData = await generateFlashcards(deck.documents, input.cardCount);
+      } catch (error) {
+        console.error("Flashcard generation failed:", error);
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: `Failed to generate flashcards: ${error instanceof Error ? error.message : "Unknown error"}`,
+        });
+      }
+
+      // Create flashcards atomically
+      const flashcards = await ctx.db.$transaction(
+        flashcardsData.map((card) =>
+          ctx.db.flashcard.create({
+            data: {
+              deckId: input.deckId,
+              frontText: card.frontText,
+              backText: card.backText,
+            },
+          })
+        )
+      );
+
+      return flashcards;
+    }),
+
   // CREATE: Create a flashcard
   create: protectedProcedure
     .input(createFlashcardSchema)

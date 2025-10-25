@@ -69,6 +69,41 @@ Generate ${questionCount} questions now.`,
       maxOutputTokens: 4096,
     },
   }),
+
+  /**
+   * Flashcard Generation Prompt
+   * Used when generating flashcards from documents
+   */
+  GENERATE_FLASHCARDS: (cardCount: number) => ({
+    systemInstruction: "You are an expert educator specialized in creating effective study flashcards that enhance memory retention and understanding.",
+    
+    userPrompt: `Based on all the provided study materials, generate exactly ${cardCount} high-quality flashcards.
+
+Requirements:
+1. Generate EXACTLY ${cardCount} flashcards
+2. Each flashcard has a FRONT (question/term/concept) and BACK (answer/definition/explanation)
+3. Cover key concepts, definitions, facts, and important relationships from the material
+4. Front should be concise and clear (question, term, or prompt)
+5. Back should provide complete, accurate information (answer, definition, or explanation)
+6. Vary difficulty levels and topics across all flashcards
+7. Make cards effective for active recall and spaced repetition
+8. Avoid overly complex or ambiguous questions
+
+CRITICAL OUTPUT FORMAT: Respond ONLY with valid JSON (no markdown, no code blocks, no extra text):
+[
+  {
+    "frontText": "Question, term, or concept here",
+    "backText": "Answer, definition, or explanation here"
+  }
+]
+
+Generate ${cardCount} flashcards now.`,
+
+    config: {
+      temperature: 0.8,
+      maxOutputTokens: 4096,
+    },
+  }),
 };
 
 /**
@@ -78,5 +113,6 @@ Generate ${questionCount} questions now.`,
 export const AI_MODELS = {
   SUMMARY: "gemini-2.5-flash", // Fast and efficient for summaries
   QUIZ: "gemini-2.5-flash", // Good balance for quiz generation
+  FLASHCARD: "gemini-2.5-flash", // Fast and efficient for flashcard generation
   // Alternative: "gemini-1.5-pro" for higher quality at higher cost
 };

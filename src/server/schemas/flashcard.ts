@@ -1,5 +1,11 @@
 import { z } from "zod";
 
+// Generate flashcards with AI
+export const generateFlashcardsSchema = z.object({
+  deckId: z.string().cuid("Invalid deck ID"),
+  cardCount: z.number().int().min(5, "Minimum 5 flashcards").max(50, "Maximum 50 flashcards").default(10),
+});
+
 // Create flashcard
 export const createFlashcardSchema = z.object({
   deckId: z.string().cuid("Invalid deck ID"),

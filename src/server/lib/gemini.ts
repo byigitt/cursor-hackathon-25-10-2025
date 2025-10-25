@@ -9,6 +9,11 @@ export interface QuizQuestion {
   }>;
 }
 
+export interface FlashcardData {
+  frontText: string;
+  backText: string;
+}
+
 interface GeminiFile {
   name: string;
   uri: string;
@@ -240,6 +245,109 @@ export async function generateQuizQuestions(
     console.error("Error generating quiz questions with Gemini:", error);
     throw new Error(
       `Failed to generate quiz questions: ${error instanceof Error ? error.message : "Unknown error"}`
+    );
+  }
+}
+
+/**
+ * Generate flashcards using Gemini's native file processing
+ * Gemini will automatically extract text from PDFs and other documents
+ */
+export async function generateFlashcards(
+  documents: Array<{ name: string; fileUrl: string }>,
+  count: number = 10
+): Promise<FlashcardData[]> {
+  if (documents.length === 0) {
+    throw new Error("No documents provided for flashcard generation");
+  }
+
+  if (count < 5 || count > 50) {
+    throw new Error("Flashcard count must be between 5 and 50");
+  }
+
+  try {
+    // Upload all files to Gemini
+    console.log(`📤 Uploading ${documents.length} document(s) to Gemini for flashcard generation...`);
+    const uploadedFiles = await Promise.all(
+      documents.map((doc) => uploadFileToGemini(doc.fileUrl, doc.name))
+    );
+    console.log(`✅ Successfully uploaded ${uploadedFiles.length} file(s)`);
+
+    const prompt = AI_PROMPTS.GENERATE_FLASHCARDS(count);
+
+    // Prepare the request with file references
+    const parts = [
+      { text: prompt.userPrompt },
+      ...uploadedFiles.map((file) => ({
+        fileData: {
+          mimeType: file.mimeType,
+          fileUri: file.uri,
+        },
+      })),
+    ];
+
+    // Call Gemini with file references
+    const response = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/${AI_MODELS.FLASHCARD}:generateContent?key=${env.GEMINI_API_KEY}`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          contents: [{ parts }],
+          systemInstruction: {
+            parts: [{ text: prompt.systemInstruction }],
+          },
+          generationConfig: prompt.config,
+        }),
+      }
+    );
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`Gemini API error: ${response.status} - ${errorText}`);
+    }
+
+    const data = await response.json();
+    let generatedText = data.candidates?.[0]?.content?.parts?.[0]?.text;
+
+    if (!generatedText) {
+      throw new Error("No flashcards generated from Gemini API");
+    }
+
+    // Clean up markdown formatting if present
+    generatedText = generatedText
+      .replace(/```json\n?/g, "")
+      .replace(/```\n?/g, "")
+      .trim();
+
+    // Parse and validate
+    const flashcards = JSON.parse(generatedText) as FlashcardData[];
+
+    if (!Array.isArray(flashcards) || flashcards.length === 0) {
+      throw new Error("Invalid flashcard format: expected array of flashcards");
+    }
+
+    // Validate each flashcard
+    for (const flashcard of flashcards) {
+      if (!flashcard.frontText || !flashcard.backText) {
+        throw new Error("Invalid flashcard format: missing frontText or backText");
+      }
+
+      if (flashcard.frontText.length > 500) {
+        throw new Error("Front text too long (max 500 characters)");
+      }
+
+      if (flashcard.backText.length > 1000) {
+        throw new Error("Back text too long (max 1000 characters)");
+      }
+    }
+
+    console.log(`✅ Generated ${flashcards.length} flashcards`);
+    return flashcards.slice(0, count);
+  } catch (error) {
+    console.error("Error generating flashcards with Gemini:", error);
+    throw new Error(
+      `Failed to generate flashcards: ${error instanceof Error ? error.message : "Unknown error"}`
     );
   }
 }
