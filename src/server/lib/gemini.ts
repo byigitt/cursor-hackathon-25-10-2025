@@ -1,0 +1,245 @@
+import { env } from "~/env";
+import { AI_PROMPTS, AI_MODELS } from "~/server/config/prompts";
+
+export interface QuizQuestion {
+  questionText: string;
+  options: Array<{
+    optionText: string;
+    isCorrect: boolean;
+  }>;
+}
+
+interface GeminiFile {
+  name: string;
+  uri: string;
+  mimeType: string;
+}
+
+/**
+ * Upload a file to Gemini File API for processing
+ * Gemini will handle PDF text extraction and other file processing automatically
+ */
+async function uploadFileToGemini(
+  fileUrl: string,
+  fileName: string
+): Promise<GeminiFile> {
+  try {
+    // Step 1: Fetch the file from UploadThing CDN
+    const fileResponse = await fetch(fileUrl);
+    if (!fileResponse.ok) {
+      throw new Error(`Failed to fetch file from ${fileUrl}: ${fileResponse.statusText}`);
+    }
+
+    const fileBlob = await fileResponse.blob();
+    const formData = new FormData();
+    formData.append("file", fileBlob, fileName);
+
+    // Step 2: Upload to Gemini Files API
+    const uploadResponse = await fetch(
+      `https://generativelanguage.googleapis.com/upload/v1beta/files?key=${env.GEMINI_API_KEY}`,
+      {
+        method: "POST",
+        body: formData,
+      }
+    );
+
+    if (!uploadResponse.ok) {
+      const errorText = await uploadResponse.text();
+      throw new Error(`Gemini file upload failed: ${uploadResponse.status} - ${errorText}`);
+    }
+
+    const uploadData = await uploadResponse.json();
+    
+    // Return file metadata for use in generation requests
+    return {
+      name: uploadData.file.name,
+      uri: uploadData.file.uri,
+      mimeType: uploadData.file.mimeType,
+    };
+  } catch (error) {
+    console.error(`Error uploading file ${fileName} to Gemini:`, error);
+    throw new Error(
+      `Failed to upload file to Gemini: ${error instanceof Error ? error.message : "Unknown error"}`
+    );
+  }
+}
+
+/**
+ * Generate summary from documents using Gemini's native file processing
+ * Gemini will automatically extract text from PDFs and other documents
+ */
+export async function generateSummary(
+  documents: Array<{ name: string; fileUrl: string }>
+): Promise<string> {
+  if (documents.length === 0) {
+    throw new Error("No documents provided for summary generation");
+  }
+
+  try {
+    // Upload all files to Gemini
+    console.log(`📤 Uploading ${documents.length} document(s) to Gemini...`);
+    const uploadedFiles = await Promise.all(
+      documents.map((doc) => uploadFileToGemini(doc.fileUrl, doc.name))
+    );
+    console.log(`✅ Successfully uploaded ${uploadedFiles.length} file(s)`);
+
+    const prompt = AI_PROMPTS.GENERATE_SUMMARY;
+
+    // Prepare the request with file references
+    const parts = [
+      { text: prompt.userPrompt },
+      ...uploadedFiles.map((file) => ({
+        fileData: {
+          mimeType: file.mimeType,
+          fileUri: file.uri,
+        },
+      })),
+    ];
+
+    // Call Gemini with file references
+    const response = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/${AI_MODELS.SUMMARY}:generateContent?key=${env.GEMINI_API_KEY}`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          contents: [{ parts }],
+          systemInstruction: {
+            parts: [{ text: prompt.systemInstruction }],
+          },
+          generationConfig: prompt.config,
+        }),
+      }
+    );
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`Gemini API error: ${response.status} - ${errorText}`);
+    }
+
+    const data = await response.json();
+    const summary = data.candidates?.[0]?.content?.parts?.[0]?.text;
+
+    if (!summary) {
+      throw new Error("No summary generated from Gemini API");
+    }
+
+    console.log(`✅ Generated summary (${summary.length} characters)`);
+    return summary;
+  } catch (error) {
+    console.error("Error generating summary with Gemini:", error);
+    throw new Error(
+      `Failed to generate summary: ${error instanceof Error ? error.message : "Unknown error"}`
+    );
+  }
+}
+
+/**
+ * Generate quiz questions using Gemini's native file processing
+ * Gemini will automatically extract text from PDFs and other documents
+ */
+export async function generateQuizQuestions(
+  documents: Array<{ name: string; fileUrl: string }>,
+  count: number = 10
+): Promise<QuizQuestion[]> {
+  if (documents.length === 0) {
+    throw new Error("No documents provided for quiz generation");
+  }
+
+  if (count < 5 || count > 30) {
+    throw new Error("Question count must be between 5 and 30");
+  }
+
+  try {
+    // Upload all files to Gemini
+    console.log(`📤 Uploading ${documents.length} document(s) to Gemini for quiz generation...`);
+    const uploadedFiles = await Promise.all(
+      documents.map((doc) => uploadFileToGemini(doc.fileUrl, doc.name))
+    );
+    console.log(`✅ Successfully uploaded ${uploadedFiles.length} file(s)`);
+
+    const prompt = AI_PROMPTS.GENERATE_QUIZ(count);
+
+    // Prepare the request with file references
+    const parts = [
+      { text: prompt.userPrompt },
+      ...uploadedFiles.map((file) => ({
+        fileData: {
+          mimeType: file.mimeType,
+          fileUri: file.uri,
+        },
+      })),
+    ];
+
+    // Call Gemini with file references
+    const response = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/${AI_MODELS.QUIZ}:generateContent?key=${env.GEMINI_API_KEY}`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          contents: [{ parts }],
+          systemInstruction: {
+            parts: [{ text: prompt.systemInstruction }],
+          },
+          generationConfig: prompt.config,
+        }),
+      }
+    );
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`Gemini API error: ${response.status} - ${errorText}`);
+    }
+
+    const data = await response.json();
+    let generatedText = data.candidates?.[0]?.content?.parts?.[0]?.text;
+
+    if (!generatedText) {
+      throw new Error("No quiz questions generated from Gemini API");
+    }
+
+    // Clean up markdown formatting if present
+    generatedText = generatedText
+      .replace(/```json\n?/g, "")
+      .replace(/```\n?/g, "")
+      .trim();
+
+    // Parse and validate
+    const questions = JSON.parse(generatedText) as QuizQuestion[];
+
+    if (!Array.isArray(questions) || questions.length === 0) {
+      throw new Error("Invalid quiz format: expected array of questions");
+    }
+
+    // Validate each question
+    for (const question of questions) {
+      if (!question.questionText || !Array.isArray(question.options)) {
+        throw new Error("Invalid question format");
+      }
+
+      if (question.options.length !== 4) {
+        throw new Error("Each question must have exactly 4 options");
+      }
+
+      const correctCount = question.options.filter((opt) => opt.isCorrect).length;
+      if (correctCount !== 1) {
+        throw new Error("Each question must have exactly 1 correct answer");
+      }
+
+      for (const option of question.options) {
+        if (!option.optionText || typeof option.isCorrect !== "boolean") {
+          throw new Error("Invalid option format");
+        }
+      }
+    }
+
+    console.log(`✅ Generated ${questions.length} quiz questions`);
+    return questions.slice(0, count);
+  } catch (error) {
+    console.error("Error generating quiz questions with Gemini:", error);
+    throw new Error(
+      `Failed to generate quiz questions: ${error instanceof Error ? error.message : "Unknown error"}`
+    );
+  }
+}
